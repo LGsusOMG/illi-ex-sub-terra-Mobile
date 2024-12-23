@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9b50e0fefaa805479917ea5f6bafe0c, type: 3}
+  m_Name: ElderWelcome
+  m_EditorClassIdentifier: 
+  dialogues:
+  - speaker: Malig
+    content: "Hola, forastero. \xBFVienes de alg\xFAn lugar lejano? No te pareces
+      a los habitantes locales."
+  - speaker: Tenroh
+    content: "S\xED, tengo una misi\xF3n. \xBFQu\xE9 es este lugar?"
+  - speaker: Malig
+    content: "Este lugar no tiene nombre, pero puedes llamarlo Mossy Town si quieres.
+      Quiz\xE1s haya algo aqu\xED que pueda ayudarte en tu viaje."

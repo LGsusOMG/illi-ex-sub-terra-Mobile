@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba01661b0ecf7cb45a350cf67bff3b35, type: 3}
+  m_Name: BossBatter
+  m_EditorClassIdentifier: 
+  displayName: "Se\xF1or escarabajo"
+  enemyDescription: "Escarabajo corpulento que viste un traje de b\xE9isbol. Puede
+    invocar su extra\xF1o artefacto con forma de anillo para que lo ayude en el combate."
+  flavourText: "\xBFPor qu\xE9 \xE9ste est\xE1 tan fuera de lugar?"
+  sprite: {fileID: 1034941218791387334, guid: 94332545da8e8544bb2759451ba37a64, type: 3}
+  thisEnemyType: 5
