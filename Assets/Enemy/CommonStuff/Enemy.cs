@@ -128,7 +128,7 @@ public class Enemy : MonoBehaviour
             anim.Play("Idle"); // Should be replaced with death sprite when asset available
         }
         rb.gravityScale = 1;
-        rb.drag = 1;
+        rb.linearDamping = 1;
         rb.freezeRotation = false;
         isDead = true;
 
@@ -159,7 +159,7 @@ public class Enemy : MonoBehaviour
 
     private void Knockback(Vector3 knockbackForce)
     {
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         rb.AddForce(knockbackForce, ForceMode2D.Impulse);
         if (stopMovingCoroutine != null)
             StopCoroutine(stopMovingCoroutine);

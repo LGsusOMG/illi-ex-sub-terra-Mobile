@@ -208,9 +208,9 @@ public class GreatCrawlerAI : MonoBehaviour
         while (Mathf.Abs(player.transform.position.x - transform.position.x) > meleeRange)
         {
             if (isFacingLeft)
-                rb.velocity = new Vector2(-runSpeed, 0f);
+                rb.linearVelocity = new Vector2(-runSpeed, 0f);
             else
-                rb.velocity = new Vector2(runSpeed, 0f);
+                rb.linearVelocity = new Vector2(runSpeed, 0f);
             yield return null;
         }
 
@@ -248,9 +248,9 @@ public class GreatCrawlerAI : MonoBehaviour
             chargeSpeed += chargeAccel * Time.deltaTime;
             chargeSpeed = Mathf.Clamp(chargeSpeed, 0.1f, maxChargeSpeed);
             if (isFacingLeft)
-                rb.velocity = new Vector2(-chargeSpeed, 0f);
+                rb.linearVelocity = new Vector2(-chargeSpeed, 0f);
             else
-                rb.velocity = new Vector2(chargeSpeed, 0f);
+                rb.linearVelocity = new Vector2(chargeSpeed, 0f);
 
             if (Physics2D.OverlapCircle(wallChecker.position, 1f, wallMask))
             {
@@ -264,7 +264,7 @@ public class GreatCrawlerAI : MonoBehaviour
         }
 
         // Recovery time
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         yield return new WaitForSeconds(0.5f / speedOverdrive);
         anim.SetInteger("chargeState", 0);
         yield return new WaitForSeconds(0.5f / speedOverdrive);
@@ -282,14 +282,14 @@ public class GreatCrawlerAI : MonoBehaviour
         rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
         anim.SetInteger("slamState", 1);
         // Wait until he stop moving up
-        while (rb.velocity.y > 0.1f)
+        while (rb.linearVelocity.y > 0.1f)
         {
             yield return null;
         }
 
         // Hover
         rb.gravityScale = 0f;
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         bool isGrounded = false;
         anim.SetInteger("slamState", 2);
         yield return new WaitForSeconds(0.25f / speedOverdrive);

@@ -11,17 +11,39 @@ public class InventoryInfoBox : MonoBehaviour
 
     public static InventoryInfoBox instance;
 
-    private void Start()
+    private void Awake()
     {
-        if (!instance)
+        if (instance == null)
         {
             instance = this;
-            nameText.text = "";
-            descText.text = "";
         }
         else
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
+            return;
         }
+    }
+
+    private void Start()
+    {
+        ClearInfo();
+    }
+
+    public void ClearInfo()
+    {
+        if (nameText != null)
+            nameText.text = "";
+        
+        if (descText != null)
+            descText.text = "";
+    }
+
+    public void SetInfo(string itemName, string itemDescription)
+    {
+        if (nameText != null)
+            nameText.text = itemName;
+        
+        if (descText != null)
+            descText.text = itemDescription;
     }
 }

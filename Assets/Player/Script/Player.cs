@@ -102,6 +102,10 @@ public class Player : MonoBehaviour
 
     public static Player instance;
     public InputMaster inputMaster;
+    
+    [Header("Mobile Controls")]
+    public bool useMobileControls = true; // Switch between mobile and keyboard controls
+    private MobileControls mobileControls;
 
     #endregion Variables
 
@@ -143,6 +147,45 @@ public class Player : MonoBehaviour
         groundBox.x -= 0.05f;
         groundBox.y = 0.1f;
         originalMaterial = sprite.material;
+        
+        // Initialize mobile controls reference - buscar en cada Start por si cambió de escena
+        ReconnectMobileControls();
+    }
+    
+    private void ReconnectMobileControls()
+    {
+        // Buscar MobileControls.instance primero (persistente)
+        if (MobileControls.instance != null)
+        {
+            mobileControls = MobileControls.instance;
+            useMobileControls = true;
+            Debug.Log("Reconnected to persistent MobileControls.instance");
+        }
+        else
+        {
+            // Si no hay instancia persistente, buscar en la escena
+            mobileControls = FindFirstObjectByType<MobileControls>();
+            if (mobileControls != null)
+            {
+                useMobileControls = true;
+                Debug.Log("Found MobileControls in current scene");
+            }
+            else
+            {
+                useMobileControls = false;
+                Debug.Log("No MobileControls found, using keyboard controls");
+            }
+        }
+        
+        // Verificar configuración de plataforma móvil
+        #if UNITY_ANDROID || UNITY_IOS
+            if (mobileControls != null)
+            {
+                useMobileControls = true;
+            }
+        #elif UNITY_EDITOR
+            // En editor, mantener la configuración manual
+        #endif
     }
 
     private void Update()
@@ -164,6 +207,8 @@ public class Player : MonoBehaviour
             HandleJump();
 
             HandleAttack();
+            
+            HandleHeal();
 
             HandleParry();
 
@@ -216,7 +261,18 @@ public class Player : MonoBehaviour
 
     private void HandleMovement()
     {
-        Vector2 direction = inputMaster.Gameplay.Movement.ReadValue<Vector2>();
+        Vector2 direction;
+        
+        // Use mobile controls if available and enabled, otherwise use keyboard/gamepad
+        if (useMobileControls && mobileControls != null)
+        {
+            direction = mobileControls.GetMovementInput();
+        }
+        else
+        {
+            direction = inputMaster.Gameplay.Movement.ReadValue<Vector2>();
+        }
+        
         verInput = direction.y;
         horInput = direction.x;
 
@@ -237,13 +293,29 @@ public class Player : MonoBehaviour
             speedModifier = 1;
         else
             speedModifier = 0.5f;
-        rb.velocity = new Vector2(horInput * playerStat.moveSpeed * speedModifier, rb.velocity.y);
+        rb.linearVelocity = new Vector2(horInput * playerStat.moveSpeed * speedModifier, rb.linearVelocity.y);
     }
 
     private void HandleJump()
     {
-        InputAction jumpAction = inputMaster.Gameplay.Jump;
-        if (jumpAction.WasPressedThisFrame())
+        bool jumpPressed, jumpHeld, jumpReleased;
+        
+        // Use mobile controls if available and enabled, otherwise use keyboard/gamepad
+        if (useMobileControls && mobileControls != null)
+        {
+            jumpPressed = mobileControls.WasJumpPressedThisFrame();
+            jumpHeld = mobileControls.IsJumpPressed();
+            jumpReleased = mobileControls.WasJumpReleasedThisFrame();
+        }
+        else
+        {
+            InputAction jumpAction = inputMaster.Gameplay.Jump;
+            jumpPressed = jumpAction.WasPressedThisFrame();
+            jumpHeld = jumpAction.IsPressed();
+            jumpReleased = jumpAction.WasReleasedThisFrame();
+        }
+        
+        if (jumpPressed)
         {
             // Jump from ground
             if (isGrounded || isLedgeGrabbing || coyoteAirTimer <= coyoteTime)
@@ -256,11 +328,11 @@ public class Player : MonoBehaviour
                 jumpCount--;
             }
         }
-        if (jumpAction.IsPressed() && isJumping)
+        if (jumpHeld && isJumping)
         {
             if (jumpTimer > 0)
             {
-                rb.velocity = new Vector2(rb.velocity.x, playerStat.jumpForce);
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, playerStat.jumpForce);
                 jumpTimer -= Time.deltaTime;
             }
             else
@@ -268,20 +340,38 @@ public class Player : MonoBehaviour
                 isJumping = false;
             }
         }
-        if (jumpAction.WasReleasedThisFrame() && isJumping)
+        if (jumpReleased && isJumping)
         {
             jumpTimer = 0f;
             isJumping = false;
-            rb.velocity = new Vector2(rb.velocity.x, 0f);
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
             coyoteAirTimer = coyoteTime + 1f; // Prevent coyote double jump bug
         }
     }
 
     private void HandleDash()
     {
-        InputAction dashAction = inputMaster.Gameplay.Dash;
-        if (dashAction.WasPressedThisFrame() && !isDashing && dashCount > 0)
+        bool dashPressed;
+        
+        // Use mobile controls if available and enabled, otherwise use keyboard/gamepad
+        if (useMobileControls && mobileControls != null)
         {
+            dashPressed = mobileControls.WasDashPressedThisFrame();
+            // Debug para verificar si el dash está siendo detectado
+            if (dashPressed)
+            {
+                Debug.Log("Mobile dash button pressed! DashCount: " + dashCount + ", IsDashing: " + isDashing);
+            }
+        }
+        else
+        {
+            InputAction dashAction = inputMaster.Gameplay.Dash;
+            dashPressed = dashAction.WasPressedThisFrame();
+        }
+        
+        if (dashPressed && !isDashing && dashCount > 0)
+        {
+            Debug.Log("Executing dash! Direction: " + (isFacingLeft ? "Left" : "Right"));
             dashCount--;
             dustPE.Play();
             Vector2 dashDirection;
@@ -293,6 +383,10 @@ public class Player : MonoBehaviour
             if (dashCoroutine != null)
                 StopCoroutine(dashCoroutine);
             dashCoroutine = StartCoroutine(Dash(false, dashDirection));
+        }
+        else if (dashPressed)
+        {
+            Debug.Log("Dash blocked - IsDashing: " + isDashing + ", DashCount: " + dashCount);
         }
     }
 
@@ -325,8 +419,20 @@ public class Player : MonoBehaviour
 
     private void HandleAttack()
     {
-        InputAction attackAction = inputMaster.Gameplay.Attack;
-        if (attackAction.WasPressedThisFrame() && attackTimer > playerStat.attackCooldown && !inAttack)
+        bool attackPressed;
+        
+        // Use mobile controls if available and enabled, otherwise use keyboard/gamepad
+        if (useMobileControls && mobileControls != null)
+        {
+            attackPressed = mobileControls.WasAttackPressedThisFrame();
+        }
+        else
+        {
+            InputAction attackAction = inputMaster.Gameplay.Attack;
+            attackPressed = attackAction.WasPressedThisFrame();
+        }
+        
+        if (attackPressed && attackTimer > playerStat.attackCooldown && !inAttack)
         {
             // Up attack
             if (verInput >= 0.1f)
@@ -350,6 +456,30 @@ public class Player : MonoBehaviour
             attackTimer = 0f;
         }
     }
+    
+    private void HandleHeal()
+    {
+        bool healPressed;
+        
+        // Use mobile controls if available and enabled, otherwise use keyboard/gamepad
+        if (useMobileControls && mobileControls != null)
+        {
+            healPressed = mobileControls.WasHealPressedThisFrame();
+        }
+        else
+        {
+            // For keyboard controls, we can use a specific key or the existing silk skill logic
+            // For now, we'll keep the existing silk skill logic and add a manual heal option for mobile
+            healPressed = false; // No direct keyboard heal button in original game
+        }
+        
+        if (healPressed && playerStat.currentSilk >= 8 && playerStat.currentHp < playerStat.maxHp)
+        {
+            playerStat.currentSilk -= 8;
+            playerStat.currentSilk = Mathf.Clamp(playerStat.currentSilk, 0, playerStat.maxSilk);
+            anim.SetTrigger("heal");
+        }
+    }
 
     private void HandleParry()
     {
@@ -359,7 +489,7 @@ public class Player : MonoBehaviour
             if (parryTimer >= playerStat.parryCooldown)
             {
                 parryTimer = 0f;
-                rb.velocity = Vector2.zero;
+                rb.linearVelocity = Vector2.zero;
                 parryCoroutine = StartCoroutine(Parrying());
             }
         }
@@ -382,7 +512,7 @@ public class Player : MonoBehaviour
 
         if (isLedgeGrabbing)
         {
-            rb.velocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
             rb.gravityScale = 0f;
             dashCount = playerStat.maxDash;
             jumpCount = playerStat.extraJump;
@@ -441,15 +571,15 @@ public class Player : MonoBehaviour
         {
             state = State.dashing;
         }
-        else if (rb.velocity.y > 0.1f)
+        else if (rb.linearVelocity.y > 0.1f)
         {
             state = State.jumping;
         }
-        else if (rb.velocity.y < -0.1f)
+        else if (rb.linearVelocity.y < -0.1f)
         {
             state = State.falling;
         }
-        else if (Mathf.Abs(rb.velocity.x) > 0.1f)
+        else if (Mathf.Abs(rb.linearVelocity.x) > 0.1f)
         {
             state = State.running;
         }
@@ -605,7 +735,7 @@ public class Player : MonoBehaviour
     {
         jumpTimer = maxJumpTime;
         isJumping = true;
-        rb.velocity = new Vector2(rb.velocity.x, playerStat.jumpForce);
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, playerStat.jumpForce);
         coyoteAirTimer = coyoteTime + 1f; // Prevent coyote double jump bug
         soundEffect.PlaySoundEffect(PlayerSoundEffect.SoundEnum.jump);
         dustPE.Play();
@@ -704,7 +834,7 @@ public class Player : MonoBehaviour
         inAttack = false;
         anim.SetBool("dashAttack", false);
         anim.SetBool("pogoAttack", false);
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         rb.AddForce(dashRecoil, ForceMode2D.Impulse);
         if (resetDash)
         {
@@ -722,7 +852,7 @@ public class Player : MonoBehaviour
         inAttack = false;
         anim.SetBool("dashAttack", false);
         anim.SetBool("pogoAttack", false);
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
     }
 
     public void RestChairRecovery()
@@ -770,7 +900,7 @@ public class Player : MonoBehaviour
     public void BeginToolAnimLock()
     {
         toolAnimLock = true;
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         rb.gravityScale = 0f;
     }
 
@@ -797,7 +927,7 @@ public class Player : MonoBehaviour
     {
         soundEffect.PlaySoundEffect(PlayerSoundEffect.SoundEnum.silkbind);
         inSilkSkill = true;
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         rb.gravityScale = 0f;
         GameObject vfx = Instantiate(silkBindVFXPrefab, transform, false);
         vfx.transform.localPosition = new Vector3(0.25f, 0, 0);
@@ -819,7 +949,7 @@ public class Player : MonoBehaviour
     {
         // If player get hit during gossamer, the gossamer object will be destroy prematurely
         inSilkSkill = true;
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         rb.gravityScale = 0f;
         gossamerInstance = Instantiate(gossamerPrefab, transform, false);
         gossamerInstance.transform.localPosition = new Vector3(0.25f, 0, 0);
@@ -829,7 +959,7 @@ public class Player : MonoBehaviour
     public void BeginSilkBurst()
     {
         inSilkSkill = true;
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         rb.gravityScale = 0f;
     }
 
@@ -860,7 +990,7 @@ public class Player : MonoBehaviour
             inAttack = true;
 
         rb.gravityScale = 0f;
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         rb.AddForce(dashDirection * playerStat.dashForce, ForceMode2D.Impulse);
 
         yield return new WaitForSeconds(playerStat.dashTime);
@@ -901,7 +1031,7 @@ public class Player : MonoBehaviour
     {
         isHurt = true;
         disableControlCounter += 1;
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         yield return new WaitForSeconds(playerStat.stunTime);
         disableControlCounter -= 1;
         isHurt = false;
@@ -909,7 +1039,7 @@ public class Player : MonoBehaviour
 
     private IEnumerator GotParalyzed()
     {
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         isParalyzed = true;
         yield return new WaitForSeconds(1f);
         isParalyzed = false;
@@ -933,8 +1063,8 @@ public class Player : MonoBehaviour
     {
         isDead = true;
         disableControlCounter += 1;
-        rb.isKinematic = true;
-        rb.velocity = Vector2.zero;
+        rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.linearVelocity = Vector2.zero;
         LevelLoader.instance.Respawn();
         yield return new WaitForSeconds(LevelLoader.instance.transitionTime);
         isDead = false;
@@ -986,7 +1116,7 @@ public class Player : MonoBehaviour
         isDashing = true;
         inAttack = true;
         rb.gravityScale = 0f;
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         rb.AddForce(dashDirection * playerStat.dashForce * 1.5f, ForceMode2D.Impulse);
 
         // Finish dash n attack

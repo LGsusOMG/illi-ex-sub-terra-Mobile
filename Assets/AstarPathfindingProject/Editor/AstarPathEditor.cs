@@ -4,8 +4,17 @@ using System.Collections.Generic;
 using System.Reflection;
 
 namespace Pathfinding {
+	// Minimal fallback for AstarUpdateChecker when it's not provided in the project.
+	// This ensures the editor compiles even if the official update checker class is missing.
+	// If the real AstarUpdateChecker exists in another assembly, remove or guard this fallback to avoid duplicate type errors.
+	internal static class AstarUpdateChecker {
+		public static System.Version latestVersion { get { return AstarPath.Version; } }
+		public static System.Version latestBetaVersion { get { return AstarPath.Version; } }
+		public static string GetURL(string key) { return "http://www.arongranberg.com/astar/"; }
+	}
+
 	[CustomEditor(typeof(AstarPath))]
-	public class AstarPathEditor : Editor {
+	public class AstarPathEditor : UnityEditor.Editor {
 		/// <summary>List of all graph editors available (e.g GridGraphEditor)</summary>
 		static Dictionary<string, CustomGraphEditorAttribute> graphEditorTypes = new Dictionary<string, CustomGraphEditorAttribute>();
 
@@ -948,7 +957,7 @@ namespace Pathfinding {
 
 		/// <summary>Opens the A* Inspector and shows the section for editing tags</summary>
 		public static void EditTags () {
-			AstarPath astar = GameObject.FindObjectOfType<AstarPath>();
+			AstarPath astar = GameObject.FindFirstObjectByType<AstarPath>();
 
 			if (astar != null) {
 				editTags = true;
@@ -1365,7 +1374,7 @@ namespace Pathfinding {
 		[MenuItem("Edit/Pathfinding/Scan All Graphs %&s")]
 		public static void MenuScan () {
 			if (AstarPath.active == null) {
-				AstarPath.active = FindObjectOfType<AstarPath>();
+				AstarPath.active = FindFirstObjectByType<AstarPath>();
 				if (AstarPath.active == null) {
 					return;
 				}

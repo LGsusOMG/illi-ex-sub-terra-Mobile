@@ -11,6 +11,7 @@ public class ShopButton : MonoBehaviour, ISelectHandler, IDeselectHandler
     public ShopItem shopItemSO;
     public Image itemImage;
     public TextMeshProUGUI priceText;
+    private TouchableUI touchableUI;
 
     private void OnEnable()
     {
@@ -26,12 +27,28 @@ public class ShopButton : MonoBehaviour, ISelectHandler, IDeselectHandler
         {
             this.gameObject.SetActive(false);
         }
-
+        
+        // Configurar componente táctil
+        SetupTouchableUI();
     }
 
     private void OnDisable()
     {
         selectFrame.SetActive(false);
+    }
+    
+    private void SetupTouchableUI()
+    {
+        // Agregar TouchableUI si no existe
+        touchableUI = GetComponent<TouchableUI>();
+        if (touchableUI == null)
+        {
+            touchableUI = gameObject.AddComponent<TouchableUI>();
+        }
+        
+        // Configurar como clickable (usará el Button.onClick existente)
+        touchableUI.SetupAsClickable();
+        Debug.Log($"ShopButton {gameObject.name} configurado como táctil");
     }
 
     public void OnSelect(BaseEventData eventData)

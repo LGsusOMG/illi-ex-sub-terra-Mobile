@@ -17,11 +17,11 @@ public class TwistedDipsaAI : DipsaAI
 
         // Shoot bullet here
         GameObject newBullet1 = Instantiate(bulletPrefabs[0], shootPos.position, Quaternion.identity);
-        newBullet1.GetComponent<Rigidbody2D>().velocity = playerDirection * bulletSpeed;
+        newBullet1.GetComponent<Rigidbody2D>().linearVelocity = playerDirection * bulletSpeed;
         GameObject newBullet2 = Instantiate(bulletPrefabs[1], shootPos.position, Quaternion.identity);
-        newBullet2.GetComponent<Rigidbody2D>().velocity = spreadDirection1 * bulletSpeed;
+        newBullet2.GetComponent<Rigidbody2D>().linearVelocity = spreadDirection1 * bulletSpeed;
         GameObject newBullet3 = Instantiate(bulletPrefabs[2], shootPos.position, Quaternion.identity);
-        newBullet3.GetComponent<Rigidbody2D>().velocity = spreadDirection2 * bulletSpeed;
+        newBullet3.GetComponent<Rigidbody2D>().linearVelocity = spreadDirection2 * bulletSpeed;
     }
 
     private void ShuffleBulletArray()

@@ -6,39 +6,53 @@ using UnityEngine.EventSystems;
 
 public class InventoryPage : MonoBehaviour
 {
-    public GameObject firstSelectedObject; //mask
     public GameObject inventoryGrid;
 
     private void OnEnable()
     {
-        SetFirstSelectedButton();
         AddSlotPrefabToGrid();
+        StartCoroutine(SelectFirstItemAfterDelay());
     }
 
     private void OnDisable()
     {
         DeleteEverySlotInGrid();
+        
+        // Limpiar info box cuando se cierra la página
+        if (InventoryInfoBox.instance != null)
+        {
+            InventoryInfoBox.instance.ClearInfo();
+        }
     }
 
-    private void SetFirstSelectedButton()
+    private IEnumerator SelectFirstItemAfterDelay()
     {
-        EventSystem.current.SetSelectedGameObject(null);
-        StartCoroutine(SetSelectedGameObject(firstSelectedObject));
-    }
-
-    private IEnumerator SetSelectedGameObject(GameObject selectedGameObject)
-    {
-        yield return new WaitForSeconds(0.01f);
-        EventSystem.current.SetSelectedGameObject(selectedGameObject, new BaseEventData(EventSystem.current));
+        // Esperar a que se instancien los items
+        yield return new WaitForEndOfFrame();
+        
+        // Buscar el primer item y seleccionarlo
+        if (inventoryGrid.transform.childCount > 0)
+        {
+            Transform firstChild = inventoryGrid.transform.GetChild(0);
+            InventoryItemButton firstButton = firstChild.GetComponent<InventoryItemButton>();
+            
+            if (firstButton != null)
+            {
+                firstButton.SelectFromCode();
+                Debug.Log("InventoryPage: Primer item seleccionado automáticamente");
+            }
+        }
+        else
+        {
+            Debug.Log("InventoryPage: No hay items en el inventario");
+        }
     }
 
     private void AddSlotPrefabToGrid()
     {
         int[] inventoryItemAmount = GameMaster.instance.playerData.inventoryItemAmount;
 
-        // Yes I know there are faster whay with for-loop
-        // But we wanna use a bunch of if to control their appearance order in grid
-        // Need to "if" for ALL item
+        // Control del orden de aparición en el grid
         if (inventoryItemAmount[(int)InventoryItem.ItemName.verdantMantle] > 0)
             Instantiate(GameMaster.instance.inventorySlotPrefabs[(int)InventoryItem.ItemName.verdantMantle], inventoryGrid.transform, false);
 

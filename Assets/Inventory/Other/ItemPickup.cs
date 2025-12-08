@@ -23,24 +23,26 @@ public class ItemPickup : MonoBehaviour
     [DrawIf("itemType", ItemType.yellowTool)]
     public YellowTool.ToolName yellowTool;
 
-    public void Start()
+    private void Start()
     {
         pickupText.SetActive(false);
+
+        // Si el jugador ya tiene este item, destruirlo
         switch (itemType)
         {
             case ItemType.redTool:
                 if (GameMaster.instance.playerData.foundRedTools.Contains(redTool))
-                    Destroy(this.gameObject);
+                    Destroy(gameObject);
                 break;
 
             case ItemType.blueTool:
                 if (GameMaster.instance.playerData.foundBlueTools.Contains(blueTool))
-                    Destroy(this.gameObject);
+                    Destroy(gameObject);
                 break;
 
             case ItemType.yellowTool:
                 if (GameMaster.instance.playerData.foundYellowTools.Contains(yellowTool))
-                    Destroy(this.gameObject);
+                    Destroy(gameObject);
                 break;
         }
     }
@@ -60,47 +62,61 @@ public class ItemPickup : MonoBehaviour
     private void Update()
     {
         bool pressUp = inputMaster.Gameplay.Movement.ReadValue<Vector2>().y == 1;
+
         if (pressUp && inRange && !activated)
         {
-            activated = true;
-            AudioSource.PlayClipAtPoint(pickupSound, Camera.main.transform.position);
-            switch (itemType)
-            {
-                case ItemType.redTool:
-                    if (!GameMaster.instance.playerData.foundRedTools.Contains(redTool))
-                    {
-                        GameMaster.instance.playerData.foundRedTools.Add(redTool);
-                        RedTool toolData = GameMaster.instance.redToolData[(int)redTool];
-                        NotifyCanvas.instance.AddItemNotifyBox(toolData.sprite, toolData.displayName);
-                    }
-                    else
-                        Debug.Log("Duplicate tool " + redTool);
-                    break;
-
-                case ItemType.blueTool:
-                    if (!GameMaster.instance.playerData.foundBlueTools.Contains(blueTool))
-                    {
-                        GameMaster.instance.playerData.foundBlueTools.Add(blueTool);
-                        BlueTool toolData = GameMaster.instance.blueToolData[(int)blueTool];
-                        NotifyCanvas.instance.AddItemNotifyBox(toolData.sprite, toolData.displayName);
-                    }
-                    else
-                        Debug.Log("Duplicate tool " + blueTool);
-                    break;
-
-                case ItemType.yellowTool:
-                    if (!GameMaster.instance.playerData.foundYellowTools.Contains(yellowTool))
-                    {
-                        GameMaster.instance.playerData.foundYellowTools.Add(yellowTool);
-                        YellowTool toolData = GameMaster.instance.yellowToolData[(int)yellowTool];
-                        NotifyCanvas.instance.AddItemNotifyBox(toolData.sprite, toolData.displayName);
-                    }
-                    else
-                        Debug.Log("Duplicate tool " + yellowTool);
-                    break;
-            }
-            Destroy(this.gameObject);
+            PickupItem();
         }
+    }
+
+    // --------------------------------------
+    // NUEVO → RECOGER AL TOCAR EL ÍTEM
+    // --------------------------------------
+    private void OnMouseDown()
+    {
+        if (!activated)  
+        {
+            PickupItem();
+        }
+    }
+    // --------------------------------------
+
+    private void PickupItem()
+    {
+        activated = true;
+        AudioSource.PlayClipAtPoint(pickupSound, Camera.main.transform.position);
+
+        switch (itemType)
+        {
+            case ItemType.redTool:
+                if (!GameMaster.instance.playerData.foundRedTools.Contains(redTool))
+                {
+                    GameMaster.instance.playerData.foundRedTools.Add(redTool);
+                    RedTool toolData = GameMaster.instance.redToolData[(int)redTool];
+                    NotifyCanvas.instance.AddItemNotifyBox(toolData.sprite, toolData.displayName);
+                }
+                break;
+
+            case ItemType.blueTool:
+                if (!GameMaster.instance.playerData.foundBlueTools.Contains(blueTool))
+                {
+                    GameMaster.instance.playerData.foundBlueTools.Add(blueTool);
+                    BlueTool toolData = GameMaster.instance.blueToolData[(int)blueTool];
+                    NotifyCanvas.instance.AddItemNotifyBox(toolData.sprite, toolData.displayName);
+                }
+                break;
+
+            case ItemType.yellowTool:
+                if (!GameMaster.instance.playerData.foundYellowTools.Contains(yellowTool))
+                {
+                    GameMaster.instance.playerData.foundYellowTools.Add(yellowTool);
+                    YellowTool toolData = GameMaster.instance.yellowToolData[(int)yellowTool];
+                    NotifyCanvas.instance.AddItemNotifyBox(toolData.sprite, toolData.displayName);
+                }
+                break;
+        }
+
+        Destroy(gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

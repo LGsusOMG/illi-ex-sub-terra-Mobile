@@ -1,12 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering.Universal;
+
 
 public class PlayerSlash : MonoBehaviour
 {
     [HideInInspector] public Player player;
-    public Light2D sparkLight;
+    public UnityEngine.Rendering.Universal.Light2D sparkLight;
     public PlayerData playerStat;
     public float knockbackPower = 1f;
     private SpriteRenderer sprite;

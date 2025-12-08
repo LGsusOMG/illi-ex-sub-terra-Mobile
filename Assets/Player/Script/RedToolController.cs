@@ -44,10 +44,10 @@ public class RedToolController : MonoBehaviour
             if (player.isFacingLeft)
             {
                 newProj.transform.localScale = new Vector3(-newProj.transform.localScale.x, newProj.transform.localScale.y, newProj.transform.localScale.z);
-                newProj.GetComponent<Rigidbody2D>().velocity = new Vector2(-20f, 0);
+                newProj.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(-20f, 0);
             }
             else
-                newProj.GetComponent<Rigidbody2D>().velocity = new Vector2(20f, 0);
+                newProj.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(20f, 0);
             GameMaster.instance.playerData.redToolsCurrentCharge[(int)RedTool.ToolName.throwBlade] -= 1;
             GetComponent<PlayerSoundEffect>().PlaySoundEffect(PlayerSoundEffect.SoundEnum.throwing);
         }
@@ -71,15 +71,15 @@ public class RedToolController : MonoBehaviour
                 newProj2.transform.localScale = newProj.transform.localScale;
                 newProj3.transform.localScale = newProj.transform.localScale;
 
-                newProj.GetComponent<Rigidbody2D>().velocity = -straightDirection * 20f;
-                newProj2.GetComponent<Rigidbody2D>().velocity = -spreadDirection1 * 20f;
-                newProj3.GetComponent<Rigidbody2D>().velocity = -spreadDirection2 * 20f;
+                newProj.GetComponent<Rigidbody2D>().linearVelocity = -straightDirection * 20f;
+                newProj2.GetComponent<Rigidbody2D>().linearVelocity = -spreadDirection1 * 20f;
+                newProj3.GetComponent<Rigidbody2D>().linearVelocity = -spreadDirection2 * 20f;
             }
             else
             {
-                newProj.GetComponent<Rigidbody2D>().velocity = straightDirection * 20f;
-                newProj2.GetComponent<Rigidbody2D>().velocity = spreadDirection1 * 20f;
-                newProj3.GetComponent<Rigidbody2D>().velocity = spreadDirection2 * 20f;
+                newProj.GetComponent<Rigidbody2D>().linearVelocity = straightDirection * 20f;
+                newProj2.GetComponent<Rigidbody2D>().linearVelocity = spreadDirection1 * 20f;
+                newProj3.GetComponent<Rigidbody2D>().linearVelocity = spreadDirection2 * 20f;
             }
             GameMaster.instance.playerData.redToolsCurrentCharge[(int)RedTool.ToolName.trippleKnife] -= 1;
             GetComponent<PlayerSoundEffect>().PlaySoundEffect(PlayerSoundEffect.SoundEnum.throwing);

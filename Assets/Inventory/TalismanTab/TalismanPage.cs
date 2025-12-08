@@ -12,46 +12,60 @@ public class TalismanPage : MonoBehaviour
 
     private void OnEnable()
     {
-        SetFirstSelectedButton();
-        Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        if (!player.resting)
+        Player player = GameObject.FindGameObjectWithTag("Player")?.GetComponent<Player>();
+        if (player != null && !player.resting)
         {
-            reminder.SetActive(true);
+            if (reminder != null)
+                reminder.SetActive(true);
         }
         else
         {
-            reminder.SetActive(false);
+            if (reminder != null)
+                reminder.SetActive(false);
+        }
+        
+        StartCoroutine(SelectFirstToolAfterDelay());
+    }
+
+    private void OnDisable()
+    {
+        // Limpiar info box cuando se cierra la página
+        if (ToolInfoBox.instance != null)
+        {
+            ToolInfoBox.instance.ClearInfo();
         }
     }
 
-    public void SetFirstSelectedButton()
+    private IEnumerator SelectFirstToolAfterDelay()
     {
-        GameObject selectedGameObject = null;
-        EventSystem.current.SetSelectedGameObject(null);
-        if (redGroup.transform.childCount > 0)
+        // Esperar a que el layout se actualice
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        
+        // Buscar el primer tool disponible en orden: red -> blue -> yellow
+        ToolButton firstTool = null;
+        
+        if (redGroup != null && redGroup.transform.childCount > 0)
         {
-            selectedGameObject = redGroup.transform.GetChild(0).gameObject;
-            StartCoroutine(SetSelectedGameObject(selectedGameObject));
+            firstTool = redGroup.transform.GetChild(0).GetComponent<ToolButton>();
         }
-        else if (blueGroup.transform.childCount > 0)
+        else if (blueGroup != null && blueGroup.transform.childCount > 0)
         {
-            selectedGameObject = blueGroup.transform.GetChild(0).gameObject;
-            StartCoroutine(SetSelectedGameObject(selectedGameObject));
+            firstTool = blueGroup.transform.GetChild(0).GetComponent<ToolButton>();
         }
-        else if (yellowGroup.transform.childCount > 0)
+        else if (yellowGroup != null && yellowGroup.transform.childCount > 0)
         {
-            selectedGameObject = yellowGroup.transform.GetChild(0).gameObject;
-            StartCoroutine(SetSelectedGameObject(selectedGameObject));
+            firstTool = yellowGroup.transform.GetChild(0).GetComponent<ToolButton>();
         }
 
-        // Display the select frame sprite
-        if (selectedGameObject != null)
-            selectedGameObject.transform.GetChild(0).gameObject.SetActive(true);
-    }
-
-    private IEnumerator SetSelectedGameObject(GameObject selectedGameObject)
-    {
-        yield return new WaitForSeconds(0.01f);
-        EventSystem.current.SetSelectedGameObject(selectedGameObject, new BaseEventData(EventSystem.current));
+        if (firstTool != null)
+        {
+            firstTool.SelectFromCode();
+            Debug.Log("TalismanPage: Primer tool seleccionado automáticamente");
+        }
+        else
+        {
+            Debug.Log("TalismanPage: No hay tools disponibles");
+        }
     }
 }

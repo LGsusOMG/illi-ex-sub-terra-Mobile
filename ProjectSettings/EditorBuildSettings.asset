@@ -77,4 +77,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scene/Level/TestArea/RestChairRoomEx.unity
     guid: e59ad4830a14d244eb19cb956e11ea93
-  m_configObjects: {}
+  - enabled: 0
+    path: Assets/Scene/Level/Menu.unity
+    guid: ed1765bf959814e4e91435d9ce14aed8
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: 253e3319946ce174b87adc2683065aee, type: 2}
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 1c8ab4a333df09643be886f0b7ea6146, type: 3}
+  m_UseUCBPForAssetBundles: 0

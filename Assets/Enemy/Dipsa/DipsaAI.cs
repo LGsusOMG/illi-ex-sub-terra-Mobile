@@ -67,7 +67,7 @@ public class DipsaAI : MonoBehaviour
 
         // Shoot bullet here
         GameObject newBullet = Instantiate(bulletPrefab, shootPos.position, Quaternion.identity);
-        newBullet.GetComponent<Rigidbody2D>().velocity = playerDirection * bulletSpeed;
+        newBullet.GetComponent<Rigidbody2D>().linearVelocity = playerDirection * bulletSpeed;
     }
 
     protected void OnDrawGizmosSelected()

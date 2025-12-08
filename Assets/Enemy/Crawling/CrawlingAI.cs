@@ -23,7 +23,7 @@ public class CrawlingAI : MonoBehaviour
             moveVelocity = new Vector2(speed, 0);
         else
             moveVelocity = new Vector2(-speed, 0);
-        rb.velocity = moveVelocity;
+        rb.linearVelocity = moveVelocity;
     }
 
     private void FixedUpdate()
@@ -58,12 +58,12 @@ public class CrawlingAI : MonoBehaviour
             ChangeDirection();
         }
         if (stabilized && !stat.shouldStopMoving)
-            rb.velocity = Vector2.Lerp(rb.velocity, moveVelocity, 0.1f);
+            rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, moveVelocity, 0.1f);
     }
 
     private void ChangeDirection()
     {
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         if (isMovingRight)
         {
             isMovingRight = false;

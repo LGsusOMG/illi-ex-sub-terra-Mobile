@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Pathfinding {
+namespace Pathfinding.Editor {
 	/// <summary>Handles update checking for the A* Pathfinding Project</summary>
 	[InitializeOnLoad]
 	public static class AstarUpdateChecker {
@@ -34,7 +34,7 @@ namespace Pathfinding {
 		const double updateCheckRate = 1F;
 
 		/// <summary>URL to the version file containing the latest version number.</summary>
-		const string updateURL = "http://www.arongranberg.com/astar/version.php";
+		const string updateURL = "https://www.arongranberg.com/astar/version.php";
 
 		/// <summary>Last time an update check was made</summary>
 		public static System.DateTime lastUpdateCheck {
@@ -189,7 +189,7 @@ namespace Pathfinding {
 		}
 
 		static void DownloadVersionInfo () {
-			var script = AstarPath.active != null ? AstarPath.active : GameObject.FindObjectOfType(typeof(AstarPath)) as AstarPath;
+			var script = AstarPath.active != null ? AstarPath.active : GameObject.FindFirstObjectByType<AstarPath>();
 
 			if (script != null) {
 				script.ConfigureReferencesInternal();
@@ -198,7 +198,7 @@ namespace Pathfinding {
 				}
 			}
 
-			bool mecanim = GameObject.FindObjectOfType(typeof(Animator)) != null;
+			bool mecanim = GameObject.FindFirstObjectByType<Animator>() != null;
 			string query = updateURL+
 						   "?v="+AstarPath.Version+
 						   "&pro=0"+

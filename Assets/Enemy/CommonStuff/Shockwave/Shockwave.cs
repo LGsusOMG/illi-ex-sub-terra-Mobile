@@ -19,7 +19,7 @@ public class Shockwave : MonoBehaviour
 
     private void Update()
     {
-        rb.velocity = kinematicVelocity;
+        rb.linearVelocity = kinematicVelocity;
         if (Physics2D.OverlapCircle(wallChecker.position, checkRadius, wallMask))
         {
             Destroy(this.gameObject);

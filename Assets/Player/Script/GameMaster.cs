@@ -52,22 +52,71 @@ public class GameMaster : MonoBehaviour
         }
     }
 
+    private void OnApplicationQuit()
+    {
+        // Guardar datos automáticamente al salir del juego
+        SaveSystem.SavePlayerData();
+        Debug.Log("GameMaster: Datos guardados automáticamente al salir");
+    }
+
     public void PatchInventoryReference()
     {
         GameObject inventoryMenu = GameObject.Find("InventoryMenu");
         if (inventoryMenu == null)
         {
             Debug.Log("Scene does not have inventoryMenu");
+            return;
+        }
+
+        // Búsqueda recursiva de TalismanHolder en toda la jerarquía
+        Transform talismanHolderTransform = FindRecursive(inventoryMenu.transform, "TalismanHolder");
+        
+        if (talismanHolderTransform == null)
+        {
+            Debug.LogWarning("GameMaster: TalismanHolder no encontrado en InventoryMenu. Buscando alternativas...");
+            
+            // Intenta buscar por componente Talisman
+            Talisman[] talismans = FindObjectsByType<Talisman>(FindObjectsSortMode.None);
+            if (talismans.Length > 0)
+            {
+                talismanHolder = talismans[0].transform.parent?.gameObject;
+                Debug.Log("GameMaster: TalismanHolder encontrado por componente Talisman");
+            }
+            else
+            {
+                Debug.LogWarning("GameMaster: No se pudo encontrar TalismanHolder ni ningún Talisman en la escena");
+                return;
+            }
         }
         else
         {
-            talismanHolder = inventoryMenu.transform.GetChild(0).Find("TalismanGroup").Find("TalismanHolder").gameObject;
-
-            if (!loadTalismanFromSave)
-                LoadTalismanFromSave();
-            else
-                equippedTalisman = talismanHolder.transform.GetChild(0).GetComponent<Talisman>();
+            talismanHolder = talismanHolderTransform.gameObject;
         }
+
+        if (!loadTalismanFromSave)
+            LoadTalismanFromSave();
+        else
+        {
+            if (talismanHolder.transform.childCount > 0)
+            {
+                equippedTalisman = talismanHolder.transform.GetChild(0).GetComponent<Talisman>();
+            }
+        }
+    }
+
+    private Transform FindRecursive(Transform parent, string name)
+    {
+        if (parent.name == name)
+            return parent;
+
+        foreach (Transform child in parent)
+        {
+            Transform result = FindRecursive(child, name);
+            if (result != null)
+                return result;
+        }
+
+        return null;
     }
 
     public void ChangeToNextTalisman()

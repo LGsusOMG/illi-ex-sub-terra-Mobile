@@ -15,9 +15,26 @@ public class ChangeLevelTrigger : MonoBehaviour
             Player player = collision.gameObject.GetComponent<Player>();
             if (player)
             {
-                InventoryMenu.instance.CloseMenu();
-                LevelLoader.instance.LoadLevel(levelName, spawnPosName);
-                activated = true;
+                // Verificar que InventoryMenu.instance existe antes de usarlo
+                if (InventoryMenu.instance != null)
+                {
+                    InventoryMenu.instance.CloseMenu();
+                }
+                else
+                {
+                    Debug.LogWarning("InventoryMenu.instance is null in ChangeLevelTrigger");
+                }
+                
+                // Verificar que LevelLoader.instance existe antes de usarlo
+                if (LevelLoader.instance != null)
+                {
+                    LevelLoader.instance.LoadLevel(levelName, spawnPosName);
+                    activated = true;
+                }
+                else
+                {
+                    Debug.LogError("LevelLoader.instance is null in ChangeLevelTrigger. Cannot change level!");
+                }
             }
         }
     }

@@ -46,7 +46,41 @@ public class LevelLoader : MonoBehaviour
     {
         GameMaster.instance.PatchInventoryReference();
         GameMaster.instance.AddVisitedRoom(scene.name);
+        
+        // IMPORTANTE: Actualizar referencia del jugador después de cambiar escena
+        RefreshPlayerReference();
+        
         UpdatePlayerPosition();
+    }
+    
+    // Actualiza la referencia del jugador después de cambios de escena
+    private void RefreshPlayerReference()
+    {
+        // Buscar el jugador en la escena actual
+        GameObject playerGO = GameObject.Find("Tenroh");
+        if (playerGO != null)
+        {
+            player = playerGO.GetComponent<Player>();
+            if (player != null)
+            {
+                Debug.Log($"LevelLoader: Referencia del jugador actualizada en escena {SceneManager.GetActiveScene().name}");
+            }
+            else
+            {
+                Debug.LogError("LevelLoader: GameObject 'Tenroh' encontrado pero no tiene componente Player");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"LevelLoader: No se encontró GameObject 'Tenroh' en escena {SceneManager.GetActiveScene().name}");
+            // Intentar buscar por tag o componente
+            Player foundPlayer = FindFirstObjectByType<Player>();
+            if (foundPlayer != null)
+            {
+                player = foundPlayer;
+                Debug.Log($"LevelLoader: Jugador encontrado por componente: {foundPlayer.gameObject.name}");
+            }
+        }
     }
 
     private void SpawnPointInit()
@@ -71,7 +105,14 @@ public class LevelLoader : MonoBehaviour
             // Edge case: When player New game and die before reach the first chair
             if (GameMaster.instance.playerData.respawnChairName == "" && GameMaster.instance.playerData.respawnPos == Vector3.zero)
             {
-                GameMaster.instance.playerData.respawnPos = player.transform.position;
+                if (player != null)
+                {
+                    GameMaster.instance.playerData.respawnPos = player.transform.position;
+                }
+                else
+                {
+                    Debug.LogWarning("LevelLoader: No se puede establecer respawnPos, jugador no encontrado");
+                }
             }
             UpdatePlayerPosition();
         }
@@ -79,6 +120,19 @@ public class LevelLoader : MonoBehaviour
 
     private void UpdatePlayerPosition()
     {
+        // Verificar que tenemos referencia del jugador
+        if (player == null)
+        {
+            Debug.LogWarning("LevelLoader: No hay referencia del jugador, intentando encontrarlo...");
+            RefreshPlayerReference();
+            
+            if (player == null)
+            {
+                Debug.LogError("LevelLoader: No se puede actualizar posición, jugador no encontrado");
+                return;
+            }
+        }
+        
         // Update position because of death
         if (doRespawn)
         {
@@ -86,14 +140,21 @@ public class LevelLoader : MonoBehaviour
             if (GameMaster.instance.playerData.respawnChairName == "")
             {
                 player.transform.position = GameMaster.instance.playerData.respawnPos;
-                player.rb.isKinematic = false;
+                player.rb.bodyType = RigidbodyType2D.Dynamic;
             }
             else
             {
                 RestChair chair = GameObject.Find(GameMaster.instance.playerData.respawnChairName).GetComponent<RestChair>();
-                player.transform.position = chair.transform.position;
-                chair.RespawnAssignToChair(player.GetComponent<Player>());
-                chair.GetOnChair();
+                if (chair != null)
+                {
+                    player.transform.position = chair.transform.position;
+                    chair.RespawnAssignToChair(player.GetComponent<Player>());
+                    chair.GetOnChair();
+                }
+                else
+                {
+                    Debug.LogError($"LevelLoader: No se encontró RestChair '{GameMaster.instance.playerData.respawnChairName}'");
+                }
             }
             doRespawn = false;
         }
@@ -101,13 +162,26 @@ public class LevelLoader : MonoBehaviour
         else if (spawnPosName != "")
         {
             Transform target = GameObject.Find(spawnPosName).transform;
-            player.transform.position = target.position;
+            if (target != null)
+            {
+                player.transform.position = target.position;
+            }
+            else
+            {
+                Debug.LogError($"LevelLoader: No se encontró spawn point '{spawnPosName}'");
+            }
+            
             spawnPosName = "";
             player.rb.gravityScale = player.originalGravityScale;
         }
-        player.disableControlCounter -= 1;
-        if (player.disableControlCounter < 0)
-            player.disableControlCounter = 0;
+        
+        // Restaurar contadores de control
+        if (player.disableControlCounter > 0)
+        {
+            player.disableControlCounter -= 1;
+            if (player.disableControlCounter < 0)
+                player.disableControlCounter = 0;
+        }
     }
 
     public void UpdateSpawnPoint(string restChairName)

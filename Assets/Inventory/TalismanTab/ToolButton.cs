@@ -5,10 +5,12 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ToolButton : MonoBehaviour, ISelectHandler, IDeselectHandler
+public class ToolButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     private GameObject selectFrame;
     private Image image;
+    private Button button;
+    
     public enum ToolType
     { red, blue, yellow };
     public ToolType toolType;
@@ -22,11 +24,33 @@ public class ToolButton : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     public Sprite emptyToolSprite;
     private bool foundItem;
+    private static ToolButton currentlySelected;
+    private bool isHovering = false;
+
+    private void Awake()
+    {
+        button = GetComponent<Button>();
+        if (button == null)
+        {
+            button = gameObject.AddComponent<Button>();
+        }
+        
+        // Activar Raycast Target para detectar clics
+        image = GetComponent<Image>();
+        if (image != null && !image.raycastTarget)
+        {
+            image.raycastTarget = true;
+        }
+    }
 
     public void OnEnable()
     {
         selectFrame = transform.GetChild(0).gameObject;
-        image = GetComponent<Image>();
+        if (selectFrame != null)
+        {
+            selectFrame.SetActive(false);
+        }
+        
         UpdateEquipState();
         GameMaster.instance.OnTalismanChange += UpdateEquipState;
         CheckIfToolFound();
@@ -34,55 +58,178 @@ public class ToolButton : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     private void OnDisable()
     {
-        selectFrame.SetActive(false);
-        GetComponent<Button>().onClick.RemoveAllListeners();
+        if (selectFrame != null)
+            selectFrame.SetActive(false);
+        
+        if (button != null)
+            button.onClick.RemoveAllListeners();
+        
         GameMaster.instance.OnTalismanChange -= UpdateEquipState;
+        
+        if (currentlySelected == this)
+        {
+            currentlySelected = null;
+            ClearInfoBox();
+        }
+        
+        isHovering = false;
     }
 
-    public void OnSelect(BaseEventData eventData)
+    // MÓVIL & PC: Click/toque
+    public void OnPointerClick(PointerEventData eventData)
     {
-        selectFrame.SetActive(true);
-        transform.root.GetComponent<InventoryMenu>().movingButtonSound.Play();
+        Debug.Log($"ToolButton: Click detectado en {gameObject.name}");
+        
+        // Si el tool no ha sido encontrado, solo seleccionar para ver info
+        if (!foundItem)
+        {
+            SelectTool(true);
+            return;
+        }
+        
+        // Si ya está seleccionado, equipar/desequipar
+        if (currentlySelected == this)
+        {
+            EquipTool();
+        }
+        else
+        {
+            // Primera vez: seleccionar
+            SelectTool(true);
+        }
+    }
+
+    // PC: Hover con mouse
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (!Application.isMobilePlatform || Input.mousePresent)
+        {
+            isHovering = true;
+            ShowToolInfo(false);
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        isHovering = false;
+        
+        if (currentlySelected != this)
+        {
+            HideToolInfo();
+        }
+    }
+
+    public void SelectTool(bool playSound = false)
+    {
+        // Deseleccionar el anterior
+        if (currentlySelected != null && currentlySelected != this)
+        {
+            currentlySelected.DeselectTool();
+        }
+
+        currentlySelected = this;
+        ShowToolInfo(playSound);
+        ScrollPanel();
+    }
+
+    private void DeselectTool()
+    {
+        if (!isHovering)
+        {
+            if (selectFrame != null)
+                selectFrame.SetActive(false);
+        }
+    }
+
+    private void ShowToolInfo(bool playSound)
+    {
+        if (selectFrame != null)
+            selectFrame.SetActive(true);
+        
+        if (playSound && InventoryMenu.instance != null && InventoryMenu.instance.movingButtonSound != null)
+        {
+            InventoryMenu.instance.movingButtonSound.Play();
+        }
 
         if (foundItem)
         {
             switch (toolType)
             {
                 case ToolType.red:
-                    ToolInfoBox.instance.nameText.text = GameMaster.instance.redToolData[(int)redToolName].displayName;
-                    ToolInfoBox.instance.descText.text = GameMaster.instance.redToolData[(int)redToolName].description;
-                    ToolInfoBox.instance.image.sprite = GameMaster.instance.redToolData[(int)redToolName].sprite;
-
+                    ToolInfoBox.instance.SetInfo(
+                        GameMaster.instance.redToolData[(int)redToolName].displayName,
+                        GameMaster.instance.redToolData[(int)redToolName].description,
+                        GameMaster.instance.redToolData[(int)redToolName].sprite
+                    );
                     break;
 
                 case ToolType.blue:
-                    ToolInfoBox.instance.nameText.text = GameMaster.instance.blueToolData[(int)blueToolName].displayName;
-                    ToolInfoBox.instance.descText.text = GameMaster.instance.blueToolData[(int)blueToolName].description;
-                    ToolInfoBox.instance.image.sprite = GameMaster.instance.blueToolData[(int)blueToolName].sprite;
+                    ToolInfoBox.instance.SetInfo(
+                        GameMaster.instance.blueToolData[(int)blueToolName].displayName,
+                        GameMaster.instance.blueToolData[(int)blueToolName].description,
+                        GameMaster.instance.blueToolData[(int)blueToolName].sprite
+                    );
                     break;
 
                 case ToolType.yellow:
-                    ToolInfoBox.instance.nameText.text = GameMaster.instance.yellowToolData[(int)yellowToolName].displayName;
-                    ToolInfoBox.instance.descText.text = GameMaster.instance.yellowToolData[(int)yellowToolName].description;
-                    ToolInfoBox.instance.image.sprite = GameMaster.instance.yellowToolData[(int)yellowToolName].sprite;
+                    ToolInfoBox.instance.SetInfo(
+                        GameMaster.instance.yellowToolData[(int)yellowToolName].displayName,
+                        GameMaster.instance.yellowToolData[(int)yellowToolName].description,
+                        GameMaster.instance.yellowToolData[(int)yellowToolName].sprite
+                    );
                     break;
             }
-            ToolInfoBox.instance.image.enabled = true;
         }
         else
         {
-            ToolInfoBox.instance.nameText.text = "";
-            ToolInfoBox.instance.descText.text = "";
-            ToolInfoBox.instance.image.sprite = emptyToolSprite;
-            ToolInfoBox.instance.image.enabled = false;
+            ToolInfoBox.instance.SetInfo("", "", emptyToolSprite, false);
         }
-
-        ScrollPanel();
     }
 
-    public void OnDeselect(BaseEventData eventData)
+    private void HideToolInfo()
     {
-        selectFrame.SetActive(false);
+        if (selectFrame != null)
+            selectFrame.SetActive(false);
+        
+        ClearInfoBox();
+    }
+
+    private void ClearInfoBox()
+    {
+        if (ToolInfoBox.instance != null)
+        {
+            ToolInfoBox.instance.ClearInfo();
+        }
+    }
+
+    private void EquipTool()
+    {
+        Player player = GameObject.FindGameObjectWithTag("Player")?.GetComponent<Player>();
+        if (player == null || !player.resting)
+        {
+            Debug.Log("ToolButton: No se puede equipar - jugador no está descansando");
+            return;
+        }
+
+        if (InventoryMenu.instance != null && InventoryMenu.instance.pressedButtonSound != null)
+        {
+            InventoryMenu.instance.pressedButtonSound.Play();
+        }
+
+        switch (toolType)
+        {
+            case ToolType.red:
+                GameMaster.instance.EquipUnequipRedTool(redToolName);
+                break;
+
+            case ToolType.blue:
+                GameMaster.instance.EquipUnequipBlueTool(blueToolName);
+                break;
+
+            case ToolType.yellow:
+                GameMaster.instance.EquipUnequipYellowTool(yellowToolName);
+                break;
+        }
     }
 
     private void ScrollPanel()
@@ -109,13 +256,11 @@ public class ToolButton : MonoBehaviour, ISelectHandler, IDeselectHandler
                 if (playerData.foundRedTools.Contains(redToolName))
                 {
                     image.sprite = GameMaster.instance.redToolData[(int)redToolName].sprite;
-                    GetComponent<Button>().onClick.AddListener(PressButton);
                     foundItem = true;
                 }
                 else
                 {
                     image.sprite = emptyToolSprite;
-                    GetComponent<Button>().onClick.RemoveAllListeners();
                     foundItem = false;
                 }
                 break;
@@ -124,13 +269,11 @@ public class ToolButton : MonoBehaviour, ISelectHandler, IDeselectHandler
                 if (playerData.foundBlueTools.Contains(blueToolName))
                 {
                     image.sprite = GameMaster.instance.blueToolData[(int)blueToolName].sprite;
-                    GetComponent<Button>().onClick.AddListener(PressButton);
                     foundItem = true;
                 }
                 else
                 {
                     image.sprite = emptyToolSprite;
-                    GetComponent<Button>().onClick.RemoveAllListeners();
                     foundItem = false;
                 }
                 break;
@@ -139,38 +282,13 @@ public class ToolButton : MonoBehaviour, ISelectHandler, IDeselectHandler
                 if (playerData.foundYellowTools.Contains(yellowToolName))
                 {
                     image.sprite = GameMaster.instance.yellowToolData[(int)yellowToolName].sprite;
-                    GetComponent<Button>().onClick.AddListener(PressButton);
                     foundItem = true;
                 }
                 else
                 {
                     image.sprite = emptyToolSprite;
-                    GetComponent<Button>().onClick.RemoveAllListeners();
                     foundItem = false;
                 }
-                break;
-        }
-    }
-
-    public void PressButton()
-    {
-        Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        if (!player.resting)
-            return;
-
-        transform.root.GetComponent<InventoryMenu>().pressedButtonSound.Play();
-        switch (toolType)
-        {
-            case ToolType.red:
-                GameMaster.instance.EquipUnequipRedTool(redToolName);
-                break;
-
-            case ToolType.blue:
-                GameMaster.instance.EquipUnequipBlueTool(blueToolName);
-                break;
-
-            case ToolType.yellow:
-                GameMaster.instance.EquipUnequipYellowTool(yellowToolName);
                 break;
         }
     }
@@ -200,5 +318,11 @@ public class ToolButton : MonoBehaviour, ISelectHandler, IDeselectHandler
                     image.color = new Color(1, 1, 1, 1);
                 break;
         }
+    }
+
+    // Método público para seleccionar desde código
+    public void SelectFromCode()
+    {
+        SelectTool(false);
     }
 }
