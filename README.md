@@ -1,45 +1,130 @@
-# Silk Melody
+# Illi Ex Sub Terra
 
-## Summary
+> *Una aventura Metroidvania inspirada en Hollow Knight*
 
-A bootleg game.
+## 🎮 Estado del Proyecto
 
-Status: Probably dropped. I want to try new things.
+**Actualmente en desarrollo** - Explorando nuevos conceptos y mecánicas. Posible retorno al desarrollo más adelante.
 
-Unity version: 2021.1.18f1.
+**Versión de Unity:** 6000.2.15f1
 
-## Table of contents
+**Plataforma:** Móvil (Android/iOS) con soporte para mando
 
-- [Table of contents](#table-of-contents)
-- [Demo image](#demo-images)
-- [Control](#control)
-- [Get the demo](#get-the-demo)
-- [Design document](#design-document)
-- [Resources](#resources)
+---
 
-## Demo images
+## 📖 Descripción
 
-![demo_image0](Images/demo_image_0.png "demo game images 0")
-![demo_image1](Images/demo_image_1.png "demo game images 1")
-![demo_image2](Images/demo_image_2.png "demo game images 2")
-![demo_image3](Images/demo_image_3.png "demo game images 3")
+Illi Ex Sub Terra es un juego de acción y plataformas 2D donde exploras cavernas subterráneas, combates enemigos y desbloqueas nuevas habilidades. Domina mecánicas de movimiento como agarrar bordes, ataques pogo y habilidades basadas en seda para navegar entornos desafiantes.
 
-## Control
+---
 
-Jump near ledge to grab them.
+## 🎯 Características
 
-Hold Jump to jump higher.
+- **Sistema de Movimiento Fluido**: Salto de pared, agarre de bordes, dash y más
+- **Mecánicas de Combate**: Ataques terrestres, combos aéreos y golpes pogo
+- **Habilidades de Seda**: Curación, proyectiles y ataques de área usando recurso de seda
+- **Pantallas de Carga Aleatorias**: Fondos dinámicos y animaciones de personaje
+- **Sistema de Guardado**: Continúa tu aventura desde puntos de control
+- **Elementos Aleatorios**: Fondos de menú randomizados para variedad
+- **Controles Táctiles + Mando**: Juega como prefieras
 
-Attack while holding up arrow to do an upward attack.
+---
 
-Attack while holding down arrow and midair to do an pogo attack.
+## 🕹️ Controles
 
-Silk skill:
+### **Controles Táctiles (Móvil)**
+- **Joystick Virtual**: Mover izquierda/derecha
+- **Botón Saltar**: Cerca de bordes para auto-agarrar
+- **Mantener Saltar**: Saltar más alto
+- **Botón Dash**: Ráfaga de movimiento rápido
+- **Botón Atacar**: Ataque básico en tierra
+- **Arriba + Atacar**: Corte hacia arriba (anti-aéreo)
+- **Abajo + Atacar (en aire)**: Ataque pogo (rebota en enemigos/objetos)
 
-- No vertical input: Heal 3HP. Cost 8 silk.
+### **Controles con Mando**
+- **Stick Analógico / D-Pad**: Mover
+- **A / B**: Saltar
+- **X / Y**: Atacar
+- **R1 / RB**: Dash
+- **Direccional + Habilidad de Seda**: Usar habilidades especiales
 
-- Up input (press silk skill while holding up): Gossamer Storm. Cost 6 silk.
+---
 
-- Down input: Silk Burst projectile. Cost 4 silk.
+## 🖼️ Capturas de Pantalla
+
+![Exploración de Cuevas](Images/demo_image_0.png)
+
+![Sistema de Combate](Images/demo_image_1.png)
+
+![Batalla contra Jefe](Images/demo_image_2.png)
+
+![Habilidades de Seda](Images/demo_image_3.png)
+
+![Diseño de Niveles](Images/demo_image_4.png)
+
+![Menú Principal](Images/demo_image_5.png)
+
+---
+
+## 🛠️ Aspectos Técnicos Destacados
+
+- **Sistema de Carga**: Manager personalizado con animaciones aleatorias
+- **Guardar/Cargar**: Datos persistentes del jugador con sistema de checkpoints
+- **Animación**: Controlador de personaje basado en máquina de estados
+- **UI/UX**: Fondos dinámicos y transiciones suaves
+- **Controles Adaptativos**: Detección automática de táctil/mando
+- **Optimización Móvil**: Rendimiento optimizado para dispositivos móviles
+
+---
 
 
+## 🚀 Planes Futuros (Tal vez)
+
+- [ ] Biomas y áreas adicionales
+- [ ] Más tipos de enemigos y jefes
+- [ ] Árbol de habilidades extendido
+- [ ] Modo speedrun con cronómetro
+- [ ] Sistema de logros
+- [ ] Nuevo juego+ con dificultad aumentada
+- [ ] Soporte para más tipos de mandos
+
+---
+
+## 🐛 Problemas Conocidos
+
+- Ocasionales glitches de colisión en bordes específicos
+- La UI de seda puede no actualizarse inmediatamente después de usar
+- La pantalla de carga puede persistir si falla el spawn del jugador
+- Optimización en algunos dispositivos de gama baja
+
+---
+
+## 📝 Notas de Desarrollo
+
+Empezó como un proyecto de aprendizaje para entender:
+- Física 2D y tilemaps de Unity
+- Patrones de diseño de máquina de estados
+- Sistemas de guardar/cargar
+- Diseño de flujo UI/UX
+- Adaptación de controles para móvil
+- Optimización de rendimiento
+
+Actualmente explorando otros conceptos de juego, pero podría volver a expandir este proyecto.
+
+---
+
+## 📱 Requisitos del Sistema
+
+### Android
+- Versión mínima: Android 7.0 (API 24)
+- RAM: 2GB mínimo, 4GB recomendado
+- Almacenamiento: 200MB
+
+### iOS
+- Versión mínima: iOS 12.0
+- Dispositivos compatibles: iPhone 6s o superior
+- Almacenamiento: 200MB
+
+---
+
+**⭐ Si encontraste este proyecto interesante, ¡considera darle una estrella al repositorio!
