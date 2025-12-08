@@ -1,5 +1,0 @@
-D:/Proyectos/Unity Projects/illi ex sub terra Mobil/.utmp/RelWithDebInfo/1mh3t6w3/armeabi-v7a/CMakeFiles/edit_cache.dir
-D:/Proyectos/Unity Projects/illi ex sub terra Mobil/.utmp/RelWithDebInfo/1mh3t6w3/armeabi-v7a/CMakeFiles/rebuild_cache.dir
-D:/Proyectos/Unity Projects/illi ex sub terra Mobil/.utmp/RelWithDebInfo/1mh3t6w3/armeabi-v7a/FramePacing/CMakeFiles/swappywrapper.dir
-D:/Proyectos/Unity Projects/illi ex sub terra Mobil/.utmp/RelWithDebInfo/1mh3t6w3/armeabi-v7a/FramePacing/CMakeFiles/edit_cache.dir
-D:/Proyectos/Unity Projects/illi ex sub terra Mobil/.utmp/RelWithDebInfo/1mh3t6w3/armeabi-v7a/FramePacing/CMakeFiles/rebuild_cache.dir
