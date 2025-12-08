@@ -52,17 +52,21 @@ Illi Ex Sub Terra es un juego de acción y plataformas 2D donde exploras caverna
 
 ## 🖼️ Capturas de Pantalla
 
-![Exploración de Cuevas](Images/demo_image_0.png)
+![Menú Principal](Images/demo_image_0.png)
 
-![Sistema de Combate](Images/demo_image_1.png)
+![Inventario](Images/demo_image_1.png)
 
-![Batalla contra Jefe](Images/demo_image_2.png)
+![Artefactos](Images/demo_image_4.png)
 
-![Habilidades de Seda](Images/demo_image_3.png)
+![Mapa](Images/demo_image_5.png)
 
-![Diseño de Niveles](Images/demo_image_4.png)
+![Descanzo](Images/demo_image_3.png)
 
-![Menú Principal](Images/demo_image_5.png)
+![Zona con Enemigos 1](Images/demo_image_2.png)
+
+![Zona con Enemigos 2](Images/demo_image_6.png)
+
+![Batalla con Boss](Images/demo_image_7.png)
 
 ---
 
