@@ -1,2 +1,45 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Unity-specific attributes for mobile project
+# Treat Unity scenes and prefabs as text (YAML) and prefer Unity's merge tool if configured
+*.unity text merge=unityyamlmerge eol=lf
+*.prefab text merge=unityyamlmerge eol=lf
+*.asset text merge=unityyamlmerge eol=lf
+
+# Treat common text assets as text with LF endings
+*.asmdef text eol=lf
+*.json text eol=lf
+*.xml text eol=lf
+*.sh text eol=lf
+*.gradle text eol=lf
+
+# Mark binary files so Git doesn't attempt text merges
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.tga binary
+*.psd binary
+*.fbx binary
+*.mp3 binary
+*.wav binary
+*.ogg binary
+*.aiff binary
+*.mp4 binary
+
+# Exclude large build artifacts from git archive exports
+*.apk export-ignore
+*.aab export-ignore
+
+# Keystore and signing files should never be included in archives
+user.keystore export-ignore
+*.keystore export-ignore
+
+# Ignore LFS from being converted by text filters (if not using LFS)
+*.psd -text
+
+# Ensure shell scripts keep LF eol
+*.bat text eol=crlf
+
+# End of .gitattributes for mobile Unity project
