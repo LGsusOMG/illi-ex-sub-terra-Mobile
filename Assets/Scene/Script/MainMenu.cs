@@ -11,23 +11,42 @@ public class MainMenu : MonoBehaviour, ISelectHandler, IDeselectHandler, IPointe
     public GameObject selectFrame;
     public AudioSource selectSound;
 
+    [Header("Referencias UI")]
+    [Tooltip("Botón de continuar. Se desactiva si no hay partida.")]
+    public Button continueButton;
+    [Tooltip("Texto del botón continuar (opcional). Si no se asigna, se busca el hijo 0 del botón")]
+    public TextMeshProUGUI continueText;
+
     private void Awake()
     {
         selectFrame.SetActive(false);
+
+        // Configurar referencia a botón Continuar y su texto
+        if (continueButton == null && transform.name == "Continue")
+            continueButton = GetComponent<Button>();
+        if (continueText == null && transform.name == "Continue" && transform.childCount > 0)
+            continueText = transform.GetChild(0).GetComponent<TextMeshProUGUI>();
     }
 
     private void Start()
     {
         if (transform.name == "Continue")
         {
-            TextMeshProUGUI continueText = transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-            if (!SaveSystem.CheckSaveExist())
+            bool hasSave = SaveSystem.CheckSaveExist();
+
+            if (continueButton != null)
             {
-                Color noSaveColor = continueText.color;
-                noSaveColor.a = 0.2f;
-                continueText.color = noSaveColor;
+                continueButton.interactable = hasSave;
             }
-            else
+
+            if (continueText != null)
+            {
+                Color c = continueText.color;
+                c.a = hasSave ? 1f : 0.2f;
+                continueText.color = c;
+            }
+
+            if (hasSave)
             {
                 EventSystem.current.firstSelectedGameObject = this.gameObject;
             }

@@ -10,6 +10,8 @@
 
 **Plataforma:** Móvil (Android/iOS) con soporte para mando
 
+**Link de Descarga:** https://lgsusomg.itch.io/illi-ex-sub-terra
+
 ---
 
 ## 📖 Descripción

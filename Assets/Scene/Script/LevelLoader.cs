@@ -56,6 +56,10 @@ public class LevelLoader : MonoBehaviour
             spawnPosName = "";
             doRespawn = false;
             Debug.Log("LevelLoader: Estado reseteado al volver al MainMenu");
+
+            // Destruir el loader persistente para evitar que siga tocando al jugador en el menú
+            instance = null;
+            Destroy(gameObject);
             return; // No hacer nada más en el MainMenu
         }
         
@@ -100,37 +104,39 @@ public class LevelLoader : MonoBehaviour
 
     private void SpawnPointInit()
     {
-        if (GameMaster.instance.playerData.respawnScene == "")
+        // Si no hay datos de respawn, usar el punto personalizado inicial y marcar respawnScene
+        if (string.IsNullOrEmpty(GameMaster.instance.playerData.respawnScene))
         {
-            Debug.Log("Should never reach here");
-            //GameMaster.instance.playerData.respawnScene = SceneManager.GetActiveScene().name;
+            Debug.Log("LevelLoader: No hay respawn guardado, usando spawn inicial personalizado");
+            GameMaster.instance.playerData.respawnScene = SceneManager.GetActiveScene().name;
+            GameMaster.instance.playerData.respawnPos = customSpawnPosition;
+            GameMaster.instance.playerData.respawnChairName = "";
+            useCustomSpawnPosition = true;
         }
-        else
+
+        doRespawn = true;
+
+        // For easier unit testing
+        if (Application.isEditor)
         {
-            doRespawn = true;
-
-            // For easier unit testing
-            if (Application.isEditor)
-            {
-                Debug.Log("Reset player respawnPos to (0 0 0) and delete respawnChairName");
-                GameMaster.instance.playerData.respawnPos = Vector3.zero;
-                GameMaster.instance.playerData.respawnChairName = "";
-            }
-
-            // Edge case: When player New game and die before reach the first chair
-            if (GameMaster.instance.playerData.respawnChairName == "" && GameMaster.instance.playerData.respawnPos == Vector3.zero)
-            {
-                if (player != null)
-                {
-                    GameMaster.instance.playerData.respawnPos = player.transform.position;
-                }
-                else
-                {
-                    Debug.LogWarning("LevelLoader: No se puede establecer respawnPos, jugador no encontrado");
-                }
-            }
-            UpdatePlayerPosition();
+            Debug.Log("Reset player respawnPos to (0 0 0) and delete respawnChairName");
+            GameMaster.instance.playerData.respawnPos = Vector3.zero;
+            GameMaster.instance.playerData.respawnChairName = "";
         }
+
+        // Edge case: When player New game and die before reach the first chair
+        if (GameMaster.instance.playerData.respawnChairName == "" && GameMaster.instance.playerData.respawnPos == Vector3.zero)
+        {
+            if (player != null)
+            {
+                GameMaster.instance.playerData.respawnPos = useCustomSpawnPosition ? customSpawnPosition : player.transform.position;
+            }
+            else
+            {
+                Debug.LogWarning("LevelLoader: No se puede establecer respawnPos, jugador no encontrado");
+            }
+        }
+        UpdatePlayerPosition();
     }
 
     private void UpdatePlayerPosition()
