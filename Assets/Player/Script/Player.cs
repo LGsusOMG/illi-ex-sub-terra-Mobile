@@ -65,6 +65,8 @@ public class Player : MonoBehaviour
     public Transform pogoSlashPos;
     public Vector2 dashRecoil;
     private float parryTimer;
+    private bool parryMovementLock; // bloquea entrada vertical durante parry
+    private bool parryDownPrev; // para edge-detect del joystick hacia abajo
     private float toolTimer;
 
     [Header("SilkAbility")]
@@ -273,6 +275,12 @@ public class Player : MonoBehaviour
         else
         {
             direction = inputMaster.Gameplay.Movement.ReadValue<Vector2>();
+        }
+
+        // Durante parry, bloquear entrada vertical (permite mover horizontal)
+        if (parryMovementLock)
+        {
+            direction.y = 0f;
         }
         
         verInput = direction.y;
@@ -511,7 +519,21 @@ public class Player : MonoBehaviour
     private void HandleParry()
     {
         InputAction parryAction = inputMaster.Gameplay.Parry;
-        if (parryAction.WasPressedThisFrame() && !inAttack && isGrounded)
+        bool parryPressed = parryAction.WasPressedThisFrame();
+
+        // Entrada alternativa: joystick hacia abajo en móvil (edge detect para no repetir cada frame)
+        if (useMobileControls && mobileControls != null)
+        {
+            float v = mobileControls.GetVerticalInput();
+            bool downNow = v <= -0.8f;
+            if (downNow && !parryDownPrev)
+            {
+                parryPressed = true;
+            }
+            parryDownPrev = downNow;
+        }
+
+        if (parryPressed && !inAttack && isGrounded)
         {
             if (parryTimer >= playerStat.parryCooldown)
             {
@@ -1110,10 +1132,18 @@ public class Player : MonoBehaviour
     private IEnumerator Parrying()
     {
         isParrying = true;
+        parryMovementLock = true; // solo bloquea vertical; horizontal sigue
+        disableControlCounter += 1; // prevenir otras acciones
+        rb.linearVelocity = new Vector2(0f, 0f);
         anim.SetInteger("parryState", 1);
-        yield return new WaitForSeconds(playerStat.parryWindow);
+
+        // Parry un poco más largo para móvil: ventana + 0.1s
+        yield return new WaitForSeconds(playerStat.parryWindow + 0.1f);
+
         anim.SetInteger("parryState", 0);
         isParrying = false;
+        parryMovementLock = false;
+        disableControlCounter -= 1;
     }
 
     private IEnumerator ParryRipose()

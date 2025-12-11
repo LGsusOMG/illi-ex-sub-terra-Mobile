@@ -44,6 +44,7 @@ Illi Ex Sub Terra es un juego de acción y plataformas 2D donde exploras caverna
 - **Botón Atacar**: Ataque básico en tierra
 - **Arriba + Atacar**: Corte hacia arriba (anti-aéreo)
 - **Abajo + Atacar (en aire)**: Ataque pogo (rebota en enemigos/objetos)
+- **Parry**: Mover Joystick Abajo
 
 ### **Controles con Mando**
 - **Stick Analógico / D-Pad**: Mover
