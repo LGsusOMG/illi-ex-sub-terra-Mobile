@@ -131,7 +131,14 @@ public class MainMenu : MonoBehaviour, ISelectHandler, IDeselectHandler, IPointe
         // Asegurar que el tiempo esté normal
         Time.timeScale = 1f;
         
-        //SaveSystem.DeleteExistingSave();
+        // Limpiar el estado del LevelLoader antes de nueva partida
+        if (LevelLoader.instance != null)
+        {
+            LevelLoader.instance.useCustomSpawnPosition = false;
+            Debug.Log("MainMenu: LevelLoader reseteado para nueva partida");
+        }
+        
+        SaveSystem.DeleteExistingSave();
         SceneManager.LoadScene("DirtCave0");
     }
 
@@ -144,6 +151,13 @@ public class MainMenu : MonoBehaviour, ISelectHandler, IDeselectHandler, IPointe
         
         if (SaveSystem.CheckSaveExist())
         {
+            // Limpiar el estado del LevelLoader antes de continuar
+            if (LevelLoader.instance != null)
+            {
+                LevelLoader.instance.useCustomSpawnPosition = false;
+                Debug.Log("MainMenu: LevelLoader reseteado para continuar partida");
+            }
+            
             SaveSystem.LoadPlayerData();
             SceneManager.LoadScene(GameMaster.instance.playerData.respawnScene);
         }

@@ -54,9 +54,9 @@ public class GameMaster : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        // Guardar datos automáticamente al salir del juego
-        SaveSystem.SavePlayerData();
-        Debug.Log("GameMaster: Datos guardados automáticamente al salir");
+        // NO guardar automáticamente - solo se guarda al sentarse en las sillas
+        // SaveSystem.SavePlayerData();
+        Debug.Log("GameMaster: Saliendo del juego sin guardar (el guardado es solo en las sillas)");
     }
 
     public void PatchInventoryReference()

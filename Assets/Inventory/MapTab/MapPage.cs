@@ -24,7 +24,7 @@ public class MapPage : MonoBehaviour
     // Variables para control táctil
     private Vector2 lastTouchPosition;
     private bool isDragging = false;
-    private bool isTouchingUI = false;
+    // private bool isTouchingUI = false;
     
     // Variables para control con mouse (PC)
     private Vector2 lastMousePosition;

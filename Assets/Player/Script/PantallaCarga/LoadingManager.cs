@@ -1,14 +1,17 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
-/// Manager para controlar la pantalla de carga desde cualquier lugar
-/// </summary>
 public class LoadingManager : MonoBehaviour
 {
     [Header("Referencias")]
     [Tooltip("Prefab de la pantalla de carga")]
     public GameObject loadingScreenPrefab;
+    
+    [Header("Textos Personalizados")]
+    public string textoNuevaPartida = "Iniciando viaje...";
+    public string textoContinuar = "Continuando aventura...";
+    public string textoVolverMenu = "Volviendo al menú...";
+    public string textoCargando = "Cargando...";
     
     private static LoadingManager instance;
     private LoadingScreen currentLoadingScreen;
@@ -39,8 +42,8 @@ public class LoadingManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
     
-    // Mostrar pantalla de carga simple
-    public void ShowLoadingScreen(string text = "Cargando", string specificAnimation = "")
+    // Mostrar pantalla de carga con texto personalizado
+    public void ShowLoadingScreen(string text = "Cargando")
     {
         if (loadingScreenPrefab == null)
         {
@@ -61,12 +64,6 @@ public class LoadingManager : MonoBehaviour
         if (currentLoadingScreen != null)
         {
             currentLoadingScreen.SetLoadingText(text);
-            
-            // Si se especifica una animación, usarla en lugar de aleatoria
-            if (!string.IsNullOrEmpty(specificAnimation))
-            {
-                currentLoadingScreen.SetSpecificAnimation(specificAnimation);
-            }
         }
     }
     
@@ -81,14 +78,14 @@ public class LoadingManager : MonoBehaviour
     }
     
     // Mostrar pantalla de carga por tiempo específico
-    public void ShowLoadingScreenForDuration(float duration, string text = "Cargando", string specificAnimation = "")
+    public void ShowLoadingScreenForDuration(float duration, string text = "Cargando")
     {
-        StartCoroutine(ShowForDurationRoutine(duration, text, specificAnimation));
+        StartCoroutine(ShowForDurationRoutine(duration, text));
     }
     
-    private IEnumerator ShowForDurationRoutine(float duration, string text, string specificAnimation)
+    private IEnumerator ShowForDurationRoutine(float duration, string text)
     {
-        ShowLoadingScreen(text, specificAnimation);
+        ShowLoadingScreen(text);
         yield return new WaitForSeconds(duration);
         HideLoadingScreen();
     }
@@ -97,33 +94,38 @@ public class LoadingManager : MonoBehaviour
     // MÉTODOS PARA BOTONES DE UI
     // ========================================
     
-    // Botón Nueva Partida - Muestra pantalla y carga el nivel inicial
+    // Botón Nueva Partida
     public void NuevaPartida()
     {
-        StartCoroutine(CargarNivelConPantalla("DirtCave0", "Iniciando aventura..."));
+        StartCoroutine(CargarNivelConPantalla("DirtCave0", textoNuevaPartida));
     }
     
-    // Botón Continuar - Muestra pantalla y carga el nivel guardado
+    // Botón Continuar
     public void Continuar()
     {
-        // Cargar los datos guardados primero
         if (SaveSystem.CheckSaveExist())
         {
             SaveSystem.LoadPlayerData();
-            // Usar la escena guardada en respawnScene
             string sceneName = GameMaster.instance.playerData.respawnScene;
-            StartCoroutine(CargarNivelConPantalla(sceneName, "Continuando..."));
+            StartCoroutine(CargarNivelConPantalla(sceneName, textoContinuar));
         }
         else
         {
-            Debug.LogWarning("LoadingManager: No hay partida guardada para continuar");
+            Debug.LogWarning("LoadingManager: No hay partida guardada");
         }
     }
 
-    // Volver al MainMenu - Muestra pantalla de carga
+    // Volver al MainMenu
     public void VolverAlMainMenu()
     {
-        StartCoroutine(CargarNivelConPantalla("MainMenu", "Volviendo al menú..."));
+        StartCoroutine(CargarNivelConPantalla("MainMenu", textoVolverMenu));
+    }
+    
+    // Método genérico para cargar cualquier nivel con texto personalizado
+    public void CargarNivel(string sceneName, string textoPersonalizado = "")
+    {
+        string texto = string.IsNullOrEmpty(textoPersonalizado) ? textoCargando : textoPersonalizado;
+        StartCoroutine(CargarNivelConPantalla(sceneName, texto));
     }
     
     private IEnumerator CargarNivelConPantalla(string sceneName, string loadingText)

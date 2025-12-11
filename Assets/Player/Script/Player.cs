@@ -35,6 +35,8 @@ public class Player : MonoBehaviour
     [SerializeField] private float horInput;
     private float jumpTimer;
     public float maxJumpTime = 0.5f;
+    private float jumpBufferTimer = 0f;
+    public float jumpBufferTime = 0.2f; // Tiempo para permitir doble salto después de presionar
     [HideInInspector] public float originalGravityScale;
     private float airTime;
     public bool isGrounded;
@@ -306,6 +308,12 @@ public class Player : MonoBehaviour
             jumpPressed = mobileControls.WasJumpPressedThisFrame();
             jumpHeld = mobileControls.IsJumpPressed();
             jumpReleased = mobileControls.WasJumpReleasedThisFrame();
+            
+            // Debug detallado para móvil
+            if (jumpPressed)
+                Debug.Log($"[MOBILE] Jump PRESSED - isGrounded: {isGrounded}, jumpCount: {jumpCount}, isJumping: {isJumping}, velocityY: {rb.linearVelocity.y}, jumpBuffer: {jumpBufferTimer}");
+            if (jumpReleased)
+                Debug.Log($"[MOBILE] Jump RELEASED - isJumping: {isJumping}, velocityY: {rb.linearVelocity.y}");
         }
         else
         {
@@ -315,17 +323,32 @@ public class Player : MonoBehaviour
             jumpReleased = jumpAction.WasReleasedThisFrame();
         }
         
+        // Lógica de salto: priorizar doble salto cuando estás en el aire
         if (jumpPressed)
         {
-            // Jump from ground
-            if (isGrounded || isLedgeGrabbing || coyoteAirTimer <= coyoteTime)
+            // PRIORIDAD 1: Doble salto cuando estás en el aire y tienes jumpCount
+            if (!isGrounded && !isLedgeGrabbing && jumpCount > 0 && coyoteAirTimer > coyoteTime)
             {
-                Jump();
-            }
-            else if (jumpCount > 0)
-            {
+                Debug.Log($"🔥 ¡DOBLE SALTO! 🔥 - jumpCount antes: {jumpCount}, isJumping: {isJumping}, velocityY: {rb.linearVelocity.y}");
                 Jump();
                 jumpCount--;
+                // Consumir el flag de salto para evitar múltiples saltos
+                if (useMobileControls && mobileControls != null)
+                    mobileControls.ConsumeJumpPress();
+                Debug.Log($"✅ Doble salto completado - jumpCount después: {jumpCount}");
+            }
+            // PRIORIDAD 2: Salto normal desde el suelo o ledge
+            else if (isGrounded || isLedgeGrabbing || coyoteAirTimer <= coyoteTime)
+            {
+                Jump();
+                // Consumir el flag de salto para evitar múltiples saltos
+                if (useMobileControls && mobileControls != null)
+                    mobileControls.ConsumeJumpPress();
+                Debug.Log($"Primer salto - isGrounded: {isGrounded}, jumpCount disponible: {playerStat.extraJump}");
+            }
+            else
+            {
+                Debug.Log($"❌ No se puede saltar - isGrounded: {isGrounded}, jumpCount: {jumpCount}, coyoteTimer: {coyoteAirTimer}");
             }
         }
         if (jumpHeld && isJumping)
@@ -344,7 +367,11 @@ public class Player : MonoBehaviour
         {
             jumpTimer = 0f;
             isJumping = false;
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
+            // Solo reducir velocidad si está subiendo, no cancelarla completamente
+            if (rb.linearVelocity.y > 0)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
+            }
             coyoteAirTimer = coyoteTime + 1f; // Prevent coyote double jump bug
         }
     }
@@ -555,6 +582,7 @@ public class Player : MonoBehaviour
             airTime = 0f;
             dashCount = playerStat.maxDash;
             jumpCount = playerStat.extraJump;
+            Debug.Log($"Tocó el suelo - jumpCount restaurado a: {jumpCount}, playerStat.extraJump: {playerStat.extraJump}");
         }
     }
 
@@ -733,12 +761,14 @@ public class Player : MonoBehaviour
 
     private void Jump()
     {
+        Debug.Log($"Jump() ejecutado - velocidad Y antes: {rb.linearVelocity.y}, jumpForce: {playerStat.jumpForce}");
         jumpTimer = maxJumpTime;
         isJumping = true;
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, playerStat.jumpForce);
         coyoteAirTimer = coyoteTime + 1f; // Prevent coyote double jump bug
         soundEffect.PlaySoundEffect(PlayerSoundEffect.SoundEnum.jump);
         dustPE.Play();
+        Debug.Log($"Jump() completado - velocidad Y después: {rb.linearVelocity.y}");
     }
 
     private void PogoAttack()
@@ -1068,7 +1098,12 @@ public class Player : MonoBehaviour
         LevelLoader.instance.Respawn();
         yield return new WaitForSeconds(LevelLoader.instance.transitionTime);
         isDead = false;
+        
+        // Resetear HP y energía/seda al morir
         playerStat.currentHp = playerStat.maxHp;
+        playerStat.currentSilk = playerStat.maxSilk;
+        Debug.Log($"Player: HP y Seda reseteados - HP: {playerStat.currentHp}/{playerStat.maxHp}, Seda: {playerStat.currentSilk}/{playerStat.maxSilk}");
+        
         disableControlCounter -= 1;
     }
 

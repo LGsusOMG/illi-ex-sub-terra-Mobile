@@ -13,6 +13,10 @@ public class LevelLoader : MonoBehaviour
     public static LevelLoader instance;
     public string spawnPosName = "";
 
+    [Header("Spawn Position")]
+    public Vector3 customSpawnPosition = new Vector3(0.22f, 21.93f, 0f);
+    public bool useCustomSpawnPosition = true;
+
     [Header("Respawn")]
     private bool doRespawn;
 
@@ -44,6 +48,17 @@ public class LevelLoader : MonoBehaviour
 
     public void SceneChange(Scene scene, LoadSceneMode mode)
     {
+        // Si volvemos al MainMenu, desactivar spawn personalizado y limpiar referencias
+        if (scene.name == "MainMenu")
+        {
+            useCustomSpawnPosition = false;
+            player = null;
+            spawnPosName = "";
+            doRespawn = false;
+            Debug.Log("LevelLoader: Estado reseteado al volver al MainMenu");
+            return; // No hacer nada más en el MainMenu
+        }
+        
         GameMaster.instance.PatchInventoryReference();
         GameMaster.instance.AddVisitedRoom(scene.name);
         
@@ -136,8 +151,15 @@ public class LevelLoader : MonoBehaviour
         // Update position because of death
         if (doRespawn)
         {
+            // Si está habilitado el spawn personalizado, usar esa coordenada
+            if (useCustomSpawnPosition)
+            {
+                player.transform.position = customSpawnPosition;
+                player.rb.bodyType = RigidbodyType2D.Dynamic;
+                Debug.Log($"LevelLoader: Jugador spawneado en posición personalizada: {customSpawnPosition}");
+            }
             // Not sit on any chair yet
-            if (GameMaster.instance.playerData.respawnChairName == "")
+            else if (GameMaster.instance.playerData.respawnChairName == "")
             {
                 player.transform.position = GameMaster.instance.playerData.respawnPos;
                 player.rb.bodyType = RigidbodyType2D.Dynamic;

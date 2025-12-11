@@ -1609,6 +1609,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 596518200947304003, guid: c4ea10ebadb242c4dac5a56fa32338c5, type: 3}
+      propertyPath: m_MatchWidthOrHeight
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 699118162608139398, guid: c4ea10ebadb242c4dac5a56fa32338c5, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -11582,6 +11586,22 @@ PrefabInstance:
     - target: {fileID: 6482269397373299213, guid: de24689133a8d5d48a0f28842f206239, type: 3}
       propertyPath: m_text
       value: Recoger
+      objectReference: {fileID: 0}
+    - target: {fileID: 6482269397373299213, guid: de24689133a8d5d48a0f28842f206239, type: 3}
+      propertyPath: m_margin.z
+      value: 0.0414896
+      objectReference: {fileID: 0}
+    - target: {fileID: 6482269397373299213, guid: de24689133a8d5d48a0f28842f206239, type: 3}
+      propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
+      value: 1801810542
+      objectReference: {fileID: 0}
+    - target: {fileID: 6482269397373299214, guid: de24689133a8d5d48a0f28842f206239, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 6482269397726776097, guid: de24689133a8d5d48a0f28842f206239, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6482269398930748186, guid: de24689133a8d5d48a0f28842f206239, type: 3}
       propertyPath: m_RootOrder

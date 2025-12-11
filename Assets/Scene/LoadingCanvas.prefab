@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1460369186214066567}
   - component: {fileID: 7612192442850528760}
   m_Layer: 5
-  m_Name: Tenhro
+  m_Name: Logo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35,7 +35,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -187}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 462.104, y: 459.7216}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6509203588732438534
@@ -66,7 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -3392996749441929143, guid: df782e0d5418ed148ba0fb7afad18ae3, type: 3}
+  m_Sprite: {fileID: -5933459892043054866, guid: ec8ee56d5a8deec4c99480447192ada9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -156,14 +156,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.4117647}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1351020475804625661, guid: c03f3d3c7075ef840bc57bc5bbef5404, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -207,7 +207,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.00097656, y: -479.88684}
+  m_AnchoredPosition: {x: 0, y: -341}
   m_SizeDelta: {x: 462.1, y: 101.2059}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7805390484815914261
@@ -247,8 +247,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -273,7 +273,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -393,7 +393,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -444,41 +444,7 @@ MonoBehaviour:
   fadeOutDuration: 0.5
   canvasGroup: {fileID: 2662059962721646343}
   loadingText: {fileID: 1515675745516099161}
-  backgroundImage: {fileID: 8934100665032264449}
-  backgroundSprites:
-  - {fileID: -1351020475804625661, guid: c03f3d3c7075ef840bc57bc5bbef5404, type: 3}
-  - {fileID: 21300000, guid: 054f30fe59dc52d4c8d48e4f5e181133, type: 3}
-  - {fileID: 6493606231086608794, guid: e611e27d1808681439772ce6ab13266b, type: 3}
-  - {fileID: -9100588192456370703, guid: 06f363106442b8f419c42576806968d7, type: 3}
-  useRandomBackground: 1
-  characterAnimator: {fileID: 7612192442850528760}
-  stateParameterName: state
-  possibleStates:
-  - name: Idle
-    stateValue: 0
-    isBoolParameter: 0
-    boolParameterName: 
-  - name: Run
-    stateValue: 1
-    isBoolParameter: 0
-    boolParameterName: 
-  - name: Jump
-    stateValue: 2
-    isBoolParameter: 0
-    boolParameterName: 
-  - name: Fall
-    stateValue: 4
-    isBoolParameter: 0
-    boolParameterName: 
-  - name: Fall
-    stateValue: 3
-    isBoolParameter: 0
-    boolParameterName: 
-  - name: Dash
-    stateValue: 5
-    isBoolParameter: 0
-    boolParameterName: 
-  useRandomAnimation: 1
+  logoImage: {fileID: 0}
   animateLoadingText: 1
   baseText: Cargando......
   dotAnimationSpeed: 0.5

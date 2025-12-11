@@ -17010,21 +17010,24 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Illi ex sub-terra\n\n\r\n\r\nCR\xC9DITOS\r\n \r\nPROYECTO ACAD\xC9MICO\r\nVideojuegos
-    para Dispositivos M\xF3viles\r\n\r\nESTUDIO DE DESARROLLO\r\nLos Plebes del Rancho\r\n\r\nLIDERAZGO
-    Y DISE\xD1O\n\r\nL\xEDder de Desarrollo \r\nJos\xE9 Roberto Angulo Salazar\r\n\r\nDise\xF1o
-    de Juego\r\nJos\xE9 Roberto Angulo Salazar\r\nJes\xFAs Javier Angulo Espinoza\r\n\r\nArte
-    Conceptual \r\nAngela Karyme Ortiz Cruz\r\n\r\nPROGRAMACI\xD3N Y C\xD3DIGO\r\n\r\nDesarrollador
-    Principal\r\nJes\xFAs Javier Angulo Espinoza\r\n\r\nDesarrolladores \r\nJos\xE9
-    Roberto Angulo Salazar\r\nRogelio Lopez Bernal\r\n\r\nDISE\xD1O DE AUDIO Y AMBIENTE\r\n\r\nSonido
-    y M\xFAsica\r\nMargarita Morales Juarez\r\nAngela Karyme Ortiz Cruz\r\n\r\nRECURSOS
-    Y ASSETS\r\n\r\nMossy Cavern Tileset\r\nCreado por Maaot\r\nitch.io/maaot\r\n\r\nRecursos
-    Adicionales\r\nObtenidos de itch.io\r\nCon agradecimiento a sus creadores\r\n\r\nINSPIRACI\xD3N\r\n\r\nEste
-    juego fue inspirado por\r\nHollow Knight\r\nDesarrollado por Team Cherry\r\n\r\nAGRADECIMIENTOS
-    ESPECIALES\r\n\r\nA nuestras familias y amigos\r\npor su apoyo incondicional\r\n\r\nA
-    la comunidad de jugadores\r\npor la inspiraci\xF3n constante\r\n\r\nA todos los
-    creadores de itch.io\r\npor compartir sus recursos\r\n\r\n\xA1GRACIAS POR JUGAR!\r\n\r\n\r\n\xA9
-    2025 Los Plebes del Rancho\r\nTodos los derechos reservados"
+  m_text: "Illi ex sub-terra\n\n\r\n\r\nCR\xC9DITOS\r\n \r\nPROYECTO ACAD\xC9MICO\r\nProyecto
+    Videojuegos para Dispositivos M\xF3viles\r\n\r\nESTUDIO DE DESARROLLO\r\nLos
+    Plebes del Rancho\r\n\r\nLIDERAZGO Y DISE\xD1O\n\r\nL\xEDder de Desarrollo \r\nJos\xE9
+    Roberto Angulo Salazar\r\n\r\nDise\xF1o de Juego\r\nJos\xE9 Roberto Angulo Salazar\r\nJes\xFAs
+    Javier Angulo Espinoza\r\n\r\nArte Conceptual \r\nAngela Karyme Ortiz Cruz\r\n\r\nPROGRAMACI\xD3N
+    Y C\xD3DIGO\r\n\r\nDesarrollador Principal\r\nJes\xFAs Javier Angulo Espinoza\r\n\r\nDesarrolladores
+    \r\nJos\xE9 Roberto Angulo Salazar\r\nRogelio Lopez Bernal\r\n\r\nDISE\xD1O DE
+    AUDIO Y AMBIENTE\r\n\r\nSonido y M\xFAsica\r\nMargarita Morales Juarez\r\nAngela
+    Karyme Ortiz Cruz\r\n\r\nRECURSOS Y ASSETS\r\n\r\nMossy Cavern Tileset\r\nCreado
+    por Maaot\r\nitch.io/maaot\r\n\r\nRecursos Adicionales\r\nObtenidos de itch.io\r\nCon
+    agradecimiento a sus creadores\r\n\r\nINSPIRACI\xD3N\r\n\r\nEste juego fue inspirado
+    por\r\nHollow Knight\r\nDesarrollado por Team Cherry\r\n\r\nAGRADECIMIENTOS ESPECIALES\r\n\r\nA
+    nuestras familias y amigos\r\npor su apoyo incondicional\r\n\r\nA la comunidad
+    de jugadores\r\npor la inspiraci\xF3n constante\r\n\r\nA todos los creadores
+    de itch.io\r\npor compartir sus recursos\n\nEste juego fue creado con fines de
+    acreditar la materia de desarrollo de Proyecto Videojuegos para Dispositivos
+    M\xF3viles.\n\nUniversidad Autonoma de Occidente\nUnidar Regional Guamuchil\r\n\r\n\xA1GRACIAS
+    POR JUGAR!\r\n\r\n\r\n\xA9 2025 Los Plebes del Rancho\r\nTodos los derechos reservados"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

@@ -61,9 +61,24 @@ public class SilkbindSandal : MonoBehaviour
 
         yield return new WaitForSeconds(tutorialMinTime);
         promt.SetActive(true);
+        
+        // Detectar input tanto en PC como en móvil
         InputAction jumpAction = inputMaster.Gameplay.Jump;
-        while (!jumpAction.IsPressed())
+        
+        while (true)
         {
+            // Detectar salto de teclado/gamepad
+            if (jumpAction.IsPressed())
+                break;
+            
+            // Detectar cualquier toque en la pantalla (móvil)
+            if (player.useMobileControls && Input.touchCount > 0 && Input.GetTouch(0).phase == UnityEngine.TouchPhase.Began)
+                break;
+            
+            // Fallback: detectar clic de mouse (para testing en editor)
+            if (Input.GetMouseButtonDown(0))
+                break;
+            
             yield return null;
         }
 

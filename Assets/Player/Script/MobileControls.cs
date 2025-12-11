@@ -256,6 +256,12 @@ public class MobileControls : MonoBehaviour
     {
         return jumpPressed;
     }
+    
+    // Consumir el flag de salto para evitar múltiples saltos en el mismo frame
+    public void ConsumeJumpPress()
+    {
+        jumpPressed = false;
+    }
 
     public bool IsJumpPressed()
     {

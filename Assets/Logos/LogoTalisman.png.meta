@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: 51e3b2027779cd24dbb2963bce60f392
+guid: ec8ee56d5a8deec4c99480447192ada9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2295722804053195993
-    second: SilkbindSandalTutorial_0
-  - first:
-      213: -6273731451342879386
-    second: SilkbindSandalTutorial_1
+      213: -5933459892043054866
+    second: LogoTalisman_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -54,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 64
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -71,7 +68,7 @@ TextureImporter:
   ignorePngGamma: 0
   applyGammaDecoding: 0
   swizzle: 50462976
-  cookieLightType: 1
+  cookieLightType: 0
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
@@ -116,67 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: SilkbindSandalTutorial_0
+      name: LogoTalisman_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9dcba5e1abb0cdf10800000000000000
-      internalID: 2295722804053195993
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SilkbindSandalTutorial_1
-      rect:
-        serializedVersion: 2
-        x: 512
-        y: 0
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 66503821c7a3fe8a0800000000000000
-      internalID: -6273731451342879386
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SilkbindSandalTutorial_2
-      rect:
-        serializedVersion: 2
-        x: 69
-        y: 38
-        width: 370
-        height: 363
+        x: 1
+        y: 4
+        width: 481
+        height: 495
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 5236331e4f0314c45a61726036cb4671
-      internalID: 1526143047
+      spriteID: ee00fbd3aad18ada0800000000000000
+      internalID: -5933459892043054866
       vertices: []
       indices: 
       edges: []
@@ -185,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -195,9 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      SilkbindSandalTutorial_0: 2295722804053195993
-      SilkbindSandalTutorial_1: -6273731451342879386
-      SilkbindSandalTutorial_2: 1526143047
+      LogoTalisman_0: -5933459892043054866
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
