@@ -276,12 +276,6 @@ public class Player : MonoBehaviour
         {
             direction = inputMaster.Gameplay.Movement.ReadValue<Vector2>();
         }
-
-        // Durante parry, bloquear entrada vertical (permite mover horizontal)
-        if (parryMovementLock)
-        {
-            direction.y = 0f;
-        }
         
         verInput = direction.y;
         horInput = direction.x;
@@ -298,12 +292,6 @@ public class Player : MonoBehaviour
             isFacingLeft = false;
             Flip();
         }
-        float speedModifier;
-        if (!isSlowed)
-            speedModifier = 1;
-        else
-            speedModifier = 0.5f;
-        rb.linearVelocity = new Vector2(horInput * playerStat.moveSpeed * speedModifier, rb.linearVelocity.y);
     }
 
     private void HandleJump()
@@ -538,7 +526,6 @@ public class Player : MonoBehaviour
             if (parryTimer >= playerStat.parryCooldown)
             {
                 parryTimer = 0f;
-                rb.linearVelocity = Vector2.zero;
                 parryCoroutine = StartCoroutine(Parrying());
             }
         }
@@ -731,21 +718,21 @@ public class Player : MonoBehaviour
         InputAction silkAction = inputMaster.Gameplay.SilkSkill;
         if (silkAction.WasPressedThisFrame() && !inAttack)
         {
-            // Gossamer
+            // Telaraña
             if (verInput >= 0.1f && playerStat.currentSilk >= 6)
             {
                 playerStat.currentSilk -= 6;
                 playerStat.currentSilk = Mathf.Clamp(playerStat.currentSilk, 0, playerStat.maxSilk);
                 anim.SetTrigger("gossamer");
             }
-            // Silk burst
+            // Explosión de seda
             else if (verInput <= -0.1f && playerStat.currentSilk >= 4)
             {
                 playerStat.currentSilk -= 4;
                 playerStat.currentSilk = Mathf.Clamp(playerStat.currentSilk, 0, playerStat.maxSilk);
                 anim.SetTrigger("silkBurst");
             }
-            // Heal
+            // Sanar
             else if (playerStat.currentSilk >= 8 && playerStat.currentHp < playerStat.maxHp)
             {
                 playerStat.currentSilk -= 8;
