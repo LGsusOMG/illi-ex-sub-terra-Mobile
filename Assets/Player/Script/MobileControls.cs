@@ -11,6 +11,7 @@ public class MobileControls : MonoBehaviour
     public bool attackPressed = false;
     public bool dashPressed = false;
     public bool healPressed = false;
+    public bool silkSkillPressed = false;
     public bool pausePressed = false;
     public bool tabLeftPressed = false;
     public bool tabRightPressed = false;
@@ -135,6 +136,11 @@ public class MobileControls : MonoBehaviour
             healPressed = false;
         }
 
+        if (silkSkillPressed)
+        {
+            silkSkillPressed = false;
+        }
+
         if (pausePressed)
         {
             pausePressed = false;
@@ -178,6 +184,12 @@ public class MobileControls : MonoBehaviour
     {
         healPressed = true;
         Debug.Log("¡Botón de curación presionado en MobileControls!");
+    }
+
+    public void OnSilkSkillButtonPressed()
+    {
+        silkSkillPressed = true;
+        Debug.Log("¡Botón de habilidad de seda presionado en MobileControls!");
     }
 
     public void OnPauseButtonPressed()
@@ -288,6 +300,11 @@ public class MobileControls : MonoBehaviour
     public bool WasHealPressedThisFrame()
     {
         return healPressed;
+    }
+
+    public bool WasSilkSkillPressedThisFrame()
+    {
+        return silkSkillPressed;
     }
 
     public bool WasPausePressedThisFrame()

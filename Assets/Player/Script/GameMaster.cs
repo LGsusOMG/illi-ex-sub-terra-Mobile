@@ -52,11 +52,52 @@ public class GameMaster : MonoBehaviour
         }
     }
 
-    private void OnApplicationQuit()
+    // Resetear completamente el estado del jugador
+    public void ResetPlayerState()
     {
-        // NO guardar automáticamente - solo se guarda al sentarse en las sillas
-        // SaveSystem.SavePlayerData();
-        Debug.Log("GameMaster: Saliendo del juego sin guardar (el guardado es solo en las sillas)");
+        Player player = FindFirstObjectByType<Player>();
+        if (player != null)
+        {
+            // Reiniciar física
+            player.rb.linearVelocity = Vector2.zero;
+            player.rb.angularVelocity = 0f;
+            player.rb.gravityScale = player.originalGravityScale;
+            player.rb.bodyType = RigidbodyType2D.Dynamic;
+            
+            // Reiniciar posición a spawn point
+            player.transform.position = new Vector3(0.22f, 21.93f, 0f);
+            
+            // Reiniciar datos del jugador
+            playerData.ResetToNewGameState();
+            
+            Debug.Log("GameMaster: Estado del jugador reseteado completamente");
+        }
+        else
+        {
+            Debug.LogWarning("GameMaster: No se encontró el jugador para resetear");
+        }
+    }
+
+    // Limpiar estados bloqueados del jugador (para cuando se carga una partida guardada)
+    public void CleanupPlayerBlockedStates()
+    {
+        Player player = FindFirstObjectByType<Player>();
+        if (player != null)
+        {
+            // Resetear contadores y flags bloqueadores
+            player.disableControlCounter = 0;
+            player.rb.linearVelocity = Vector2.zero;
+            player.rb.gravityScale = player.originalGravityScale;
+            
+            // Detener todas las corrutinas que podrían mantener el jugador bloqueado
+            player.StopAllCoroutines();
+            
+            Debug.Log("GameMaster: Estados bloqueados del jugador limpiados");
+        }
+        else
+        {
+            Debug.LogWarning("GameMaster: No se encontró el jugador para limpiar estados");
+        }
     }
 
     public void PatchInventoryReference()

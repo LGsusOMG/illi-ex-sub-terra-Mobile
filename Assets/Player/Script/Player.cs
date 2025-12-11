@@ -53,10 +53,10 @@ public class Player : MonoBehaviour
     [Header("Combat")]
     public int disableControlCounter = 0;
     /**
-     * Using integer instead of bool allow us to easy keep tracking of how many NON-INTERRUPTABLE
-    * effects are disabling the player control. For example, player get stunned and paralyzed
-    * meaning the counter = 2. If one effect come off first, the counter is 1 so they still
-    * cant move. If we use bool the player will be able to move after 1 effect wear off.
+     * Usar entero en lugar de bool nos permite rastrear fácilmente cuántos efectos NO-INTERRUMPIBLES
+    * están deshabilitando el control del jugador. Por ejemplo, el jugador es aturdido y paralizado
+    * lo que significa que el contador = 2. Si un efecto se quita primero, el contador es 1 así que todavía
+    * no pueden moverse. Si usamos bool el jugador podrá moverse después de que se quite 1 efecto.
     */
 
     public bool inIFrame = false;
@@ -65,7 +65,6 @@ public class Player : MonoBehaviour
     public Transform pogoSlashPos;
     public Vector2 dashRecoil;
     private float parryTimer;
-    private bool parryMovementLock; // bloquea entrada vertical durante parry
     private bool parryDownPrev; // para edge-detect del joystick hacia abajo
     private float toolTimer;
 
@@ -232,7 +231,7 @@ public class Player : MonoBehaviour
 
         AnimationControl();
 
-        // Prevent bug
+        // Prevenir bug
         Mathf.Clamp(playerStat.currentHp, 0, playerStat.maxHp);
 
         LandingDust();
@@ -267,7 +266,7 @@ public class Player : MonoBehaviour
     {
         Vector2 direction;
         
-        // Use mobile controls if available and enabled, otherwise use keyboard/gamepad
+        // Usar controles móviles si están disponibles y habilitados, de lo contrario usar teclado/gamepad
         if (useMobileControls && mobileControls != null)
         {
             direction = mobileControls.GetMovementInput();
@@ -280,25 +279,31 @@ public class Player : MonoBehaviour
         verInput = direction.y;
         horInput = direction.x;
 
-        // Move left
+        // Mover a la izquierda
         if (horInput < 0 && !inAttack)
         {
             isFacingLeft = true;
             Flip();
         }
-        // Move right
+        // Mover a la derecha
         else if (horInput > 0 && !inAttack)
         {
             isFacingLeft = false;
             Flip();
         }
+        float speedModifier;
+        if (!isSlowed)
+            speedModifier = 1;
+        else
+            speedModifier = 0.5f;
+        rb.linearVelocity = new Vector2(horInput * playerStat.moveSpeed * speedModifier, rb.linearVelocity.y);
     }
 
     private void HandleJump()
     {
         bool jumpPressed, jumpHeld, jumpReleased;
         
-        // Use mobile controls if available and enabled, otherwise use keyboard/gamepad
+        // Usar controles móviles si están disponibles y habilitados, de lo contrario usar teclado/gamepad
         if (useMobileControls && mobileControls != null)
         {
             jumpPressed = mobileControls.WasJumpPressedThisFrame();
@@ -368,7 +373,7 @@ public class Player : MonoBehaviour
             {
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
             }
-            coyoteAirTimer = coyoteTime + 1f; // Prevent coyote double jump bug
+            coyoteAirTimer = coyoteTime + 1f; // Prevenir bug de doble salto coyote
         }
     }
 
@@ -376,7 +381,7 @@ public class Player : MonoBehaviour
     {
         bool dashPressed;
         
-        // Use mobile controls if available and enabled, otherwise use keyboard/gamepad
+        // Usar controles móviles si están disponibles y habilitados, de lo contrario usar teclado/gamepad
         if (useMobileControls && mobileControls != null)
         {
             dashPressed = mobileControls.WasDashPressedThisFrame();
@@ -430,7 +435,7 @@ public class Player : MonoBehaviour
                 StopCoroutine(dashCoroutine);
             dashCoroutine = StartCoroutine(Dash(true, dashDirection));
 
-            // Attack
+            // Ataque
             soundEffect.PlaySoundEffect(PlayerSoundEffect.SoundEnum.attack);
             anim.SetBool("dashAttack", true);
             PlayerSlash dashSlash = Instantiate(dashSlashPrefab, dashSlashPos, false);
@@ -444,7 +449,7 @@ public class Player : MonoBehaviour
     {
         bool attackPressed;
         
-        // Use mobile controls if available and enabled, otherwise use keyboard/gamepad
+        // Usar controles móviles si están disponibles y habilitados, de lo contrario usar teclado/gamepad
         if (useMobileControls && mobileControls != null)
         {
             attackPressed = mobileControls.WasAttackPressedThisFrame();
@@ -457,18 +462,18 @@ public class Player : MonoBehaviour
         
         if (attackPressed && attackTimer > playerStat.attackCooldown && !inAttack)
         {
-            // Up attack
+            // Ataque hacia arriba
             if (verInput >= 0.1f)
             {
                 anim.SetTrigger("attackUp");
                 AttackDealDamage(true);
             }
-            // Down attack
+            // Ataque hacia abajo
             else if (verInput <= -0.1f && !isGrounded)
             {
                 PogoAttack();
             }
-            // Normal attack
+            // Ataque normal
             else
             {
                 anim.SetTrigger("attack");
@@ -484,16 +489,16 @@ public class Player : MonoBehaviour
     {
         bool healPressed;
         
-        // Use mobile controls if available and enabled, otherwise use keyboard/gamepad
+        // Usar controles móviles si están disponibles y habilitados, de lo contrario usar teclado/gamepad
         if (useMobileControls && mobileControls != null)
         {
             healPressed = mobileControls.WasHealPressedThisFrame();
         }
         else
         {
-            // For keyboard controls, we can use a specific key or the existing silk skill logic
-            // For now, we'll keep the existing silk skill logic and add a manual heal option for mobile
-            healPressed = false; // No direct keyboard heal button in original game
+            // Para controles de teclado, podemos usar una tecla específica o la lógica de habilidad de seda existente
+            // Por ahora, mantendremos la lógica de habilidad de seda existente y agregaremos una opción de curación manual para móvil
+            healPressed = false; // Sin botón de curación directa de teclado en el juego original
         }
         
         if (healPressed && playerStat.currentSilk >= 8 && playerStat.currentHp < playerStat.maxHp)
@@ -526,6 +531,7 @@ public class Player : MonoBehaviour
             if (parryTimer >= playerStat.parryCooldown)
             {
                 parryTimer = 0f;
+                rb.linearVelocity = Vector2.zero;
                 parryCoroutine = StartCoroutine(Parrying());
             }
         }
@@ -596,7 +602,7 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// Mainly used for state or looped animation
+    /// Principalmente usado para estado o animación en bucle
     /// </summary>
     private void AnimationControl()
     {
@@ -633,7 +639,7 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// Amount must be positive for dealing damage.
+    /// La cantidad debe ser positiva para causar daño.
     /// </summary>
     /// <param name="amount"></param>
     /// <param name="knockbackDir"></param>
@@ -649,16 +655,16 @@ public class Player : MonoBehaviour
             return;
         }
 
-        // Disable all active silk skills
+        // Deshabilitar todas las habilidades de seda activas
         if (gossamerInstance != null)
             Destroy(gossamerInstance);
         if (silkBurstInstance != null)
             Destroy(silkBurstInstance);
 
         if (amount == 0)
-            Debug.Log("This attack deal 0 damage!");
+            Debug.Log("¡Este ataque causa 0 de daño!");
 
-        // Damage calculation
+        // Cálculo de daño
         soundEffect.PlaySoundEffect(PlayerSoundEffect.SoundEnum.damaged);
         if (amount <= playerStat.lifebloodHp) // Lifeblood hp absorb some damage
         {
@@ -678,7 +684,7 @@ public class Player : MonoBehaviour
         playerStat.currentHp -= amount;
         playerStat.currentHp = Mathf.Clamp(playerStat.currentHp, 0, playerStat.maxHp);
 
-        // Damaged after effect
+        // Efectos posteriores al daño
         rb.gravityScale = originalGravityScale;
         isDashing = false;
         inAttack = false;
@@ -715,24 +721,36 @@ public class Player : MonoBehaviour
 
     public void HandleSilkSkill()
     {
-        InputAction silkAction = inputMaster.Gameplay.SilkSkill;
-        if (silkAction.WasPressedThisFrame() && !inAttack)
+        bool silkSkillPressed;
+        
+        // Usar controles móviles si están disponibles y habilitados, de lo contrario usar teclado/gamepad
+        if (useMobileControls && mobileControls != null)
         {
-            // Telaraña
+            silkSkillPressed = mobileControls.WasSilkSkillPressedThisFrame();
+        }
+        else
+        {
+            InputAction silkAction = inputMaster.Gameplay.SilkSkill;
+            silkSkillPressed = silkAction.WasPressedThisFrame();
+        }
+        
+        if (silkSkillPressed && !inAttack)
+        {
+            // Red de seda
             if (verInput >= 0.1f && playerStat.currentSilk >= 6)
             {
                 playerStat.currentSilk -= 6;
                 playerStat.currentSilk = Mathf.Clamp(playerStat.currentSilk, 0, playerStat.maxSilk);
                 anim.SetTrigger("gossamer");
             }
-            // Explosión de seda
+            // Ráfaga de seda
             else if (verInput <= -0.1f && playerStat.currentSilk >= 4)
             {
                 playerStat.currentSilk -= 4;
                 playerStat.currentSilk = Mathf.Clamp(playerStat.currentSilk, 0, playerStat.maxSilk);
                 anim.SetTrigger("silkBurst");
             }
-            // Sanar
+            // Curación
             else if (playerStat.currentSilk >= 8 && playerStat.currentHp < playerStat.maxHp)
             {
                 playerStat.currentSilk -= 8;
@@ -774,7 +792,7 @@ public class Player : MonoBehaviour
         jumpTimer = maxJumpTime;
         isJumping = true;
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, playerStat.jumpForce);
-        coyoteAirTimer = coyoteTime + 1f; // Prevent coyote double jump bug
+        coyoteAirTimer = coyoteTime + 1f; // Prevenir bug de doble salto coyote
         soundEffect.PlaySoundEffect(PlayerSoundEffect.SoundEnum.jump);
         dustPE.Play();
         Debug.Log($"Jump() completado - velocidad Y después: {rb.linearVelocity.y}");
@@ -793,7 +811,7 @@ public class Player : MonoBehaviour
             StopCoroutine(dashCoroutine);
         dashCoroutine = StartCoroutine(Dash(true, dashDirection));
 
-        // Attack
+        // Ataque
         anim.SetBool("pogoAttack", true);
         PlayerSlash pogoSlash = Instantiate(pogoSlashPrefab, pogoSlashPos, false);
         pogoSlash.transform.localPosition = Vector3.zero;
@@ -955,7 +973,7 @@ public class Player : MonoBehaviour
         soundEffect.PlaySoundEffect(PlayerSoundEffect.SoundEnum.syringe);
         StartCoroutine(FlashBlue());
         GameObject effect = GetComponent<RedToolController>().lifebloodNeedlePE;
-        // Create a splash of lifeblood effect from the back and slightly upward
+        // Crear un efecto de salpicadura de sangre vital desde atrás y ligeramente hacia arriba
         if (isFacingLeft)
             Instantiate(effect, transform.position, Quaternion.LookRotation(new Vector3(1, 0.2f, 0), Vector3.up));
         else
@@ -986,7 +1004,7 @@ public class Player : MonoBehaviour
 
     public void BeginGossamer()
     {
-        // If player get hit during gossamer, the gossamer object will be destroy prematurely
+        // Si el jugador es golpeado durante gossamer, el objeto gossamer será destruido prematuramente
         inSilkSkill = true;
         rb.linearVelocity = Vector2.zero;
         rb.gravityScale = 0f;
@@ -1119,8 +1137,6 @@ public class Player : MonoBehaviour
     private IEnumerator Parrying()
     {
         isParrying = true;
-        parryMovementLock = true; // solo bloquea vertical; horizontal sigue
-        disableControlCounter += 1; // prevenir otras acciones
         rb.linearVelocity = new Vector2(0f, 0f);
         anim.SetInteger("parryState", 1);
 
@@ -1129,20 +1145,18 @@ public class Player : MonoBehaviour
 
         anim.SetInteger("parryState", 0);
         isParrying = false;
-        parryMovementLock = false;
-        disableControlCounter -= 1;
     }
 
     private IEnumerator ParryRipose()
     {
-        //Get hit -> freeze time
+        // Recibir golpe -> congelar tiempo
         anim.SetInteger("parryState", 2);
         soundEffect.PlaySoundEffect(PlayerSoundEffect.SoundEnum.parry);
         Time.timeScale = 0f;
         yield return new WaitForSecondsRealtime(0.35f);
         Time.timeScale = 1f;
 
-        // I-frame
+        // I-frame (marcos de invulnerabilidad)
         inIFrame = true;
         int playerLayerId = LayerMask.NameToLayer("Player");
         int EnemyLayerId = LayerMask.NameToLayer("Enemy");
@@ -1150,7 +1164,7 @@ public class Player : MonoBehaviour
         Physics2D.IgnoreLayerCollision(playerLayerId, EnemyLayerId, true);
         Physics2D.IgnoreLayerCollision(playerLayerId, EnemyAttackLayerId, true);
 
-        // while dash forward and attack
+        // Mientras hace dash hacia adelante y ataca
         soundEffect.PlaySoundEffect(PlayerSoundEffect.SoundEnum.attack);
         anim.SetInteger("parryState", 3);
         PlayerSlash dashSlash = Instantiate(dashSlashPrefab, dashSlashPos, false);
@@ -1171,7 +1185,7 @@ public class Player : MonoBehaviour
         rb.linearVelocity = Vector2.zero;
         rb.AddForce(dashDirection * playerStat.dashForce * 1.5f, ForceMode2D.Impulse);
 
-        // Finish dash n attack
+        // Finalizar dash y ataque
         yield return new WaitForSeconds(playerStat.dashTime);
         isDashing = false;
         inAttack = false;
@@ -1179,15 +1193,15 @@ public class Player : MonoBehaviour
         rb.gravityScale = originalGravityScale;
         anim.SetInteger("parryState", 0);
 
-        // Bonus iFrame time
+        // Tiempo extra de i-frame
         yield return new WaitForSeconds(0.1f);
 
-        // Return to normal
+        // Volver a la normalidad
         inIFrame = false;
         Physics2D.IgnoreLayerCollision(playerLayerId, EnemyLayerId, false);
         Physics2D.IgnoreLayerCollision(playerLayerId, EnemyAttackLayerId, false);
 
-        // Reset parry cooldown
+        // Reiniciar cooldown de parry
         parryTimer = playerStat.parryCooldown;
     }
 

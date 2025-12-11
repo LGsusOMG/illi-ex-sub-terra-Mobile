@@ -157,6 +157,9 @@ public class MainMenu : MonoBehaviour, ISelectHandler, IDeselectHandler, IPointe
             Debug.Log("MainMenu: LevelLoader reseteado para nueva partida");
         }
         
+        // Resetear completamente el estado del jugador
+        GameMaster.instance.ResetPlayerState();
+        
         SaveSystem.DeleteExistingSave();
         SceneManager.LoadScene("DirtCave0");
     }
@@ -178,6 +181,10 @@ public class MainMenu : MonoBehaviour, ISelectHandler, IDeselectHandler, IPointe
             }
             
             SaveSystem.LoadPlayerData();
+            
+            // Limpiar estados bloqueados del jugador
+            GameMaster.instance.CleanupPlayerBlockedStates();
+            
             SceneManager.LoadScene(GameMaster.instance.playerData.respawnScene);
         }
         else

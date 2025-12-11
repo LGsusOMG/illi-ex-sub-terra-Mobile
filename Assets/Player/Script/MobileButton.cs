@@ -20,6 +20,7 @@ public class MobileButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
         Attack,
         Dash,
         Heal,
+        SilkSkill,
         Pause,
         TabLeft,
         TabRight,
@@ -63,6 +64,9 @@ public class MobileButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
                     break;
                 case ButtonType.Heal:
                     mobileControls.OnHealButtonPressed();
+                    break;
+                case ButtonType.SilkSkill:
+                    mobileControls.OnSilkSkillButtonPressed();
                     break;
                 case ButtonType.TabLeft:
                     mobileControls.OnTabLeftPressed();

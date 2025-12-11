@@ -2338,7 +2338,7 @@ GameObject:
   - component: {fileID: 1093378867287883691}
   - component: {fileID: 5216664789837771757}
   m_Layer: 5
-  m_Name: Habilidad
+  m_Name: Habilidades
   m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2458,7 +2458,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45df9cc9580294c4c9304cccf991ea46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MobileButton
-  buttonType: 3
+  buttonType: 4
   buttonImage: {fileID: 4912351984000405669}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   pressedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}

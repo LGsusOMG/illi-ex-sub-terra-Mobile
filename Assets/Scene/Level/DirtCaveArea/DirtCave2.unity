@@ -22337,8 +22337,13 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Ataca a los enemigos para obtener seda.\nPresiona tu ultimo boton cuando
-    tengas 8\n sedas para recuperar salud"
+  m_text: 'Ataca a los enemigos para obtener seda.
+
+
+    Presiona tu ultimo boton
+    cuando tengas 8
+
+    de sedas para recuperar salud.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -22626,8 +22631,7 @@ MonoBehaviour:
   attackPressed: 0
   dashPressed: 0
   healPressed: 0
-  inventoryPressed: 0
-  mapPressed: 0
+  silkSkillPressed: 0
   pausePressed: 0
   tabLeftPressed: 0
   tabRightPressed: 0

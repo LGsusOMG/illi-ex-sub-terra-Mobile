@@ -119,14 +119,12 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         isPaused = false;
 
-        
-
         Debug.Log("Estado del juego reseteado - Time.timeScale: " + Time.timeScale);
     }
 
     private bool IsGameplayScene(string sceneName)
     {
-        return sceneName.StartsWith("Level_") || !sceneName.Contains("Menu");
+        return sceneName.StartsWith("DirtCave") || !sceneName.Contains("MainMenu");
     }
 
     private void Update()
@@ -218,18 +216,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // MÉTODOS DE CAMBIO DE ESCENA (ACTUALIZADOS)
-    public void LoadLevel(int levelNumber)
-    {
-        if (isChangingScene || isLoading) return;
-
-        string sceneName = $"Level_{levelNumber}";
-        StartCoroutine(LoadSceneWithLoadingScreen(sceneName));
-    }
-
     public void GoToMenu()
     {
         Debug.Log("GoToMenu llamado");
+        Time.timeScale = 1f;
 
         if (isChangingScene || isLoading) return;
 
@@ -252,21 +242,6 @@ public class GameManager : MonoBehaviour
         Time.timeScale = isPaused ? 0f : 1f;
     }
 
-    private int GetCurrentLevelNumber()
-    {
-        string sceneName = SceneManager.GetActiveScene().name;
-        if (sceneName.StartsWith("Level_"))
-        {
-            string levelStr = sceneName.Replace("Level_", "");
-            int levelNumber;
-            if (int.TryParse(levelStr, out levelNumber))
-            {
-                return levelNumber;
-            }
-        }
-        return 1;
-    }
-
     private void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
@@ -285,12 +260,5 @@ public class GameManager : MonoBehaviour
 #else
         Application.Quit();
 #endif
-    }
-
-    public void LoadNextLevel()
-    {
-        int currentLevel = GetCurrentLevelNumber();
-        int nextLevel = currentLevel + 1;
-        LoadLevel(nextLevel);
     }
 }
