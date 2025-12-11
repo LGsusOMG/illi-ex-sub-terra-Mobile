@@ -12,8 +12,6 @@
 
 **Link de Descarga:** https://lgsusomg.itch.io/illi-ex-sub-terra
 
-**Link de Descarga:** https://lgsusomg.itch.io/illi-ex-sub-terra
-
 ---
 
 ## 📖 Descripción
