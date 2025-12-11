@@ -132,7 +132,7 @@ Actualmente explorando otros conceptos de juego, pero podría volver a expandir 
 - RAM: 2GB mínimo, 4GB recomendado
 - Almacenamiento: 200MB
 
-### iOS
+### iOS (Proximamente)
 - Versión mínima: iOS 12.0
 - Dispositivos compatibles: iPhone 6s o superior
 - Almacenamiento: 200MB
