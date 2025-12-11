@@ -139,4 +139,4 @@ Actualmente explorando otros conceptos de juego, pero podría volver a expandir 
 
 ---
 
-**⭐ Si encontraste este proyecto interesante, ¡considera darle una estrella al repositorio!
+**⭐ Si encontraste este proyecto interesante, ¡considera darle una estrella al repositorio!**
