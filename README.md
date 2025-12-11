@@ -8,7 +8,9 @@
 
 **Versión de Unity:** 6000.2.15f1
 
-**Plataforma:** Móvil (Android/iOS) con soporte para mando
+**Plataforma:** Móvil (Android) con soporte para mando
+
+**Link de Descarga:** https://lgsusomg.itch.io/illi-ex-sub-terra
 
 ---
 
